@@ -1,10 +1,7 @@
 import { useEffect, useState } from 'react'
 
-const VERSION = '14.22.1'
-const LANGUAGE = 'es_MX'
-const CHAMPS_DATA = `https://ddragon.leagueoflegends.com/cdn/${VERSION}/data/${LANGUAGE}/champion.json`
-
-function useGetChamps() {
+function useGetChamps(language, version) {
+    const CHAMPS_DATA = `https://ddragon.leagueoflegends.com/cdn/${version}/data/${language}/champion.json`
     const [champs, setChamps] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState(null)
@@ -24,9 +21,6 @@ function useGetChamps() {
 
                 const mappedChamps = mapChamps(Object.values(data.data))
                 setChamps(mappedChamps)
-
-                console.log(`Champ data:`, data)
-                console.log(`Champ URL:`, CHAMPS_DATA)
             } catch (error) {
                 console.error('Error fetching champion data:', error)
                 setError(error)
@@ -35,17 +29,15 @@ function useGetChamps() {
             }
         }
         fetchChamps()
-    }, [])
+    }, [language, version])
 
     const fetchChampDetails = async (champId) => {
-        const champUrl = `https://ddragon.leagueoflegends.com/cdn/${VERSION}/data/${LANGUAGE}/champion/${champId}.json`
+        const champUrl = `https://ddragon.leagueoflegends.com/cdn/${version}/data/${language}/champion/${champId}.json`
         try {
             setIsLoadingChamp(true)
             const response = await fetch(champUrl)
             const data = await response.json()
             setSelectedChamp(data.data[champId])
-            console.log(`Champ data on modal:`, data)
-            console.log(`Champ URL  on modal:`, champUrl)
         } catch (error) {
             console.error('Error fetching champion details:', error)
         } finally {

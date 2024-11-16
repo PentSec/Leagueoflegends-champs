@@ -1,8 +1,14 @@
-import useGetChamps from '@/hooks/useGetChamps'
+import { useGetChamps, useGetVersion, useGetLang } from '@/hooks'
 import { ScrollShadow, Card, Image, Spinner } from '@nextui-org/react'
 import { useState } from 'react'
 import { useInfiniteScroll } from '@nextui-org/use-infinite-scroll'
-import { SearchChampsComponent, TooltipComp, ChampInfo } from '@/components'
+import {
+    SearchChampsComponent,
+    TooltipComp,
+    ChampInfo,
+    SelectVersion,
+    SelectLang
+} from '@/components'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const MotionCard = motion.create(Card)
@@ -20,11 +26,15 @@ const cardVariants = {
 }
 
 function ChampContainer() {
-    const { champs, isLoading, error, selectedChamp, isLoadingChamp, fetchChampDetails } =
-        useGetChamps()
     const [itemToShow, setItemToShow] = useState(50)
     const [searchChamps, setSearchChamps] = useState('')
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [language, setLanguage] = useState('es_MX')
+    const [version, setVersion] = useState('14.22.1')
+    const { versions } = useGetVersion()
+    const { languages } = useGetLang()
+    const { champs, isLoading, error, selectedChamp, isLoadingChamp, fetchChampDetails } =
+        useGetChamps(language, version)
 
     const openModal = (champId) => {
         fetchChampDetails(champId)
@@ -65,6 +75,8 @@ function ChampContainer() {
 
     return (
         <main className="relative w-full">
+            <SelectLang value={language} setLanguage={setLanguage} languages={languages} />
+            <SelectVersion value={version} setVersion={setVersion} versions={versions} />
             <SearchChampsComponent value={searchChamps} changeValue={setSearchChamps} />
             <ScrollShadow
                 className="h-[calc(85vh-32px)] overflow-auto p-12 gap-4"
@@ -86,7 +98,6 @@ function ChampContainer() {
                                     onPress={() => openModal(champ.id)}
                                     isPressable
                                 >
-                                    {/* <div className='absolute z-10 bg-[url("border.png")] bg-no-repeat bg-center bg-cover w-full h-full rounded-md pointer-events-none' /> */}
                                     <Image
                                         isZoomed
                                         radius="none"
