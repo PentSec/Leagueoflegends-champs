@@ -10,6 +10,7 @@ import {
     SelectLang
 } from '@/components'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useMemo } from 'react'
 
 const MotionCard = motion.create(Card)
 
@@ -31,8 +32,8 @@ function ChampContainer() {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [language, setLanguage] = useState('es_MX')
     const [version, setVersion] = useState('14.22.1')
-    const { versions } = useGetVersion()
-    const { languages } = useGetLang()
+    const { versions, isLoadingVersion, errorVersion } = useGetVersion()
+    const { languages, isLoadingLang, errorLang } = useGetLang()
     const { champs, isLoading, error, selectedChamp, isLoadingChamp, fetchChampDetails } =
         useGetChamps(language, version)
 
@@ -53,14 +54,13 @@ function ChampContainer() {
         console.log(`error`, error)
     }
 
-    if (champs) {
-        console.log(`champs en componente`, champs)
-    }
-
-    const filteredChamps =
-        champs?.filter((champs) =>
-            champs?.name?.toLowerCase().includes(searchChamps.toLowerCase())
-        ) || []
+    const filteredChamps = useMemo(
+        () =>
+            champs?.filter((champs) =>
+                champs?.name?.toLowerCase().includes(searchChamps.toLowerCase())
+            ) || [],
+        [champs, searchChamps]
+    )
 
     const loadMore = () => {
         setItemToShow((prev) => prev + 10)
@@ -75,8 +75,20 @@ function ChampContainer() {
 
     return (
         <main className="relative w-full">
-            <SelectLang value={language} setLanguage={setLanguage} languages={languages} />
-            <SelectVersion value={version} setVersion={setVersion} versions={versions} />
+            <SelectLang
+                value={language}
+                setLanguage={setLanguage}
+                languages={languages}
+                isLoadingLang={isLoadingLang}
+                isErrorLang={errorLang}
+            />
+            <SelectVersion
+                value={version}
+                setVersion={setVersion}
+                versions={versions}
+                isLoadingVer={isLoadingVersion}
+                isErrorVer={errorVersion}
+            />
             <SearchChampsComponent value={searchChamps} changeValue={setSearchChamps} />
             <ScrollShadow
                 className="h-[calc(85vh-32px)] overflow-auto p-12 gap-4"

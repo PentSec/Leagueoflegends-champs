@@ -1,4 +1,6 @@
+import { useRef } from 'react'
 import { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 
 function useGetChamps(language, version) {
     const CHAMPS_DATA = `https://ddragon.leagueoflegends.com/cdn/${version}/data/${language}/champion.json`
@@ -9,6 +11,14 @@ function useGetChamps(language, version) {
     const [isLoadingChamp, setIsLoadingChamp] = useState(false)
 
     useEffect(() => {
+        if (!version || !language) {
+            const errors = []
+            if (!version) errors.push('🤬 Error: No version selected.')
+            if (!language) errors.push('🤬 Error: No language selected.')
+
+            errors.forEach((error) => toast(error))
+            return
+        }
         const fetchChamps = async () => {
             try {
                 setIsLoading(true)
@@ -21,6 +31,7 @@ function useGetChamps(language, version) {
 
                 const mappedChamps = mapChamps(Object.values(data.data))
                 setChamps(mappedChamps)
+                console.log(`champs useGetChamps`, mappedChamps)
             } catch (error) {
                 console.error('Error fetching champion data:', error)
                 setError(error)
@@ -31,13 +42,30 @@ function useGetChamps(language, version) {
         fetchChamps()
     }, [language, version])
 
+    const cache = useRef({})
+
     const fetchChampDetails = async (champId) => {
+        if (!version || !language) {
+            const errors = []
+            if (!version) errors.push('🤬 Error: No version selected.')
+            if (!language) errors.push('🤬 Error: No language selected.')
+
+            errors.forEach((error) => toast(error))
+            return
+        }
+        if (cache.current[champId]) {
+            setSelectedChamp(cache.current[champId])
+            return
+        }
+
         const champUrl = `https://ddragon.leagueoflegends.com/cdn/${version}/data/${language}/champion/${champId}.json`
         try {
             setIsLoadingChamp(true)
             const response = await fetch(champUrl)
             const data = await response.json()
+            cache.current[champId] = data.data[champId]
             setSelectedChamp(data.data[champId])
+            console.log(`champ useGetChamps 2`, data.data[champId])
         } catch (error) {
             console.error('Error fetching champion details:', error)
         } finally {
