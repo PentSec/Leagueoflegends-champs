@@ -1,20 +1,24 @@
-import { Select, SelectItem } from '@nextui-org/react'
+import { Autocomplete, AutocompleteItem } from '@nextui-org/react'
 
-function SelectLang({ languages, setLanguage, value }) {
+function SelectLang({ languages, setLanguage, value, isLoadingLang, isErrorLang }) {
+    if (isErrorLang) {
+        console.error(`isErrorLang`, isErrorLang)
+    }
     return (
-        <Select
-            label="Idioma"
+        <Autocomplete
+            label="Language"
             className="mb-4"
-            value={value}
-            onChange={(e) => setLanguage(e.target.value)}
+            isLoading={isLoadingLang}
+            selectedKey={value}
+            onSelectionChange={(key) => setLanguage(key)}
+            defaultItems={languages}
         >
             {languages.map((lang) => (
-                <SelectItem key={lang} value={lang} textValue={lang}>
-                    {' '}
+                <AutocompleteItem key={lang} value={lang}>
                     {lang}
-                </SelectItem>
+                </AutocompleteItem>
             ))}
-        </Select>
+        </Autocomplete>
     )
 }
 
