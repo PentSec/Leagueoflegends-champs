@@ -1,5 +1,5 @@
 import { Avatar, Divider, Spinner, Tooltip } from '@nextui-org/react'
-import { buildPositionIndex, getChampionRoles } from '@/utils/roleRates'
+import { buildPositionIndex, getChampionLanes, laneIcon } from '@/utils'
 import { useChampionData } from '@/hooks'
 import { useMemo } from 'react'
 
@@ -19,7 +19,7 @@ function TooltipComp({ champ, children }) {
     }
 
     const champKey = champ.key
-    const roles = getChampionRoles(champKey, positionIndex)
+    const lanes = getChampionLanes(champKey, positionIndex)
 
     return (
         <Tooltip
@@ -103,10 +103,24 @@ function TooltipComp({ champ, children }) {
                         <div className="mt-2">
                             <h2 className="font-semibold text-gray-200">Position</h2>
                             <ul>
-                                {roles.length > 0 ? (
-                                    roles.map(({ role, rate }) => (
-                                        <li key={role}>
-                                            <strong>{role}:</strong> {(rate * 100).toFixed(2)}%
+                                {lanes.length > 0 ? (
+                                    lanes.map(({ lane, rate }) => (
+                                        <li key={lane}>
+                                            <div className="flex items-center justify-between mt-2">
+                                                <div className="flex items-center gap-2">
+                                                    <Avatar
+                                                        src={laneIcon[lane]}
+                                                        alt={lane}
+                                                        className="flex-shrink-0 w-6 h-6 text-tiny"
+                                                    />
+
+                                                    <span className="flex flex-col text-tiny">
+                                                        {' '}
+                                                        <strong>{lane} Laner:</strong> Pick Rate{' '}
+                                                        {(rate * 100).toFixed(2)}%
+                                                    </span>
+                                                </div>
+                                            </div>
                                         </li>
                                     ))
                                 ) : (

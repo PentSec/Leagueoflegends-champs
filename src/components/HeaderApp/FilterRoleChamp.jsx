@@ -1,5 +1,5 @@
 import { Autocomplete, AutocompleteItem, Avatar } from '@nextui-org/react'
-import { roleIcon } from '@/components'
+import { roleIcon } from '@/utils'
 
 const FilterRoleChamp = ({ value, key, setSelectedRole }) => {
     const options = ['All', ...value]
@@ -27,9 +27,8 @@ const FilterRoleChamp = ({ value, key, setSelectedRole }) => {
                             {role !== 'All' && (
                                 <Avatar
                                     src={roleIcon[role]}
-                                    size="sm"
                                     alt={role}
-                                    className="flex-shrink-0"
+                                    className="flex-shrink-0 w-6 h-6 text-tiny"
                                 />
                             )}
                             <div className="flex flex-col">

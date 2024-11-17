@@ -6,12 +6,12 @@
 export const buildPositionIndex = (championData) => {
     const positionIndex = {}
 
-    Object.keys(championData).forEach((role) => {
-        Object.entries(championData[role]).forEach(([champKey, rate]) => {
+    Object.keys(championData).forEach((lane) => {
+        Object.entries(championData[lane]).forEach(([champKey, rate]) => {
             if (!positionIndex[champKey]) {
                 positionIndex[champKey] = []
             }
-            positionIndex[champKey].push({ role, rate })
+            positionIndex[champKey].push({ lane, rate })
         })
     })
 
@@ -28,4 +28,4 @@ export const buildPositionIndex = (championData) => {
  * @returns {Array}
  */
 
-export const getChampionRoles = (champKey, positionIndex) => positionIndex[champKey] || []
+export const getChampionLanes = (champKey, positionIndex) => positionIndex[champKey] || []
