@@ -1,6 +1,26 @@
-import { Avatar, Divider, Tooltip } from '@nextui-org/react'
+import { Avatar, Divider, Spinner, Tooltip } from '@nextui-org/react'
+import { buildPositionIndex, getChampionRoles } from '@/utils/roleRates'
+import { useChampionData } from '@/hooks'
+import { useMemo } from 'react'
 
 function TooltipComp({ champ, children }) {
+    const { championData, loading } = useChampionData()
+
+    const positionIndex = useMemo(() => {
+        return championData ? buildPositionIndex(championData) : {}
+    }, [championData])
+
+    if (loading) {
+        return <Spinner label="Loading..." />
+    }
+
+    if (!championData) {
+        return <div>Error to load data</div>
+    }
+
+    const champKey = champ.key
+    const roles = getChampionRoles(champKey, positionIndex)
+
     return (
         <Tooltip
             placement="left-start"
@@ -81,6 +101,18 @@ function TooltipComp({ champ, children }) {
                         <Divider />
 
                         <div className="mt-2">
+                            <h2 className="font-semibold text-gray-200">Position</h2>
+                            <ul>
+                                {roles.length > 0 ? (
+                                    roles.map(({ role, rate }) => (
+                                        <li key={role}>
+                                            <strong>{role}:</strong> {(rate * 100).toFixed(2)}%
+                                        </li>
+                                    ))
+                                ) : (
+                                    <p>No hay datos de roles para este campeón.</p>
+                                )}
+                            </ul>
                             <h2 className="font-semibold text-gray-200">Roles</h2>
                             <p>{champ.roles.join(', ')}</p>
                             <h2 className="mt-2 font-semibold text-gray-200">Resource</h2>

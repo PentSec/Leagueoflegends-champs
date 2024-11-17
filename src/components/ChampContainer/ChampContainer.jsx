@@ -1,16 +1,16 @@
 import { useGetChamps, useGetVersion, useGetLang } from '@/hooks'
 import { ScrollShadow, Card, Image, Spinner } from '@nextui-org/react'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useInfiniteScroll } from '@nextui-org/use-infinite-scroll'
 import {
     SearchChampsComponent,
     TooltipComp,
     ChampInfo,
     SelectVersion,
-    SelectLang
+    SelectLang,
+    FilterRoleChamp
 } from '@/components'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useMemo } from 'react'
 
 const MotionCard = motion.create(Card)
 
@@ -32,10 +32,18 @@ function ChampContainer() {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [language, setLanguage] = useState('es_MX')
     const [version, setVersion] = useState('14.22.1')
+    const [selectedRole, setSelectedRole] = useState('')
     const { versions, isLoadingVersion, errorVersion } = useGetVersion()
     const { languages, isLoadingLang, errorLang } = useGetLang()
     const { champs, isLoading, error, selectedChamp, isLoadingChamp, fetchChampDetails } =
         useGetChamps(language, version)
+
+    const roleChamps = useMemo(() => {
+        if (!champs || champs.length === 0) return []
+        const allRoles = champs.flatMap((champ) => champ.roles)
+        return Array.from(new Set(allRoles))
+    }, [champs])
+    console.log(`roleChamps`, roleChamps)
 
     const openModal = (champId) => {
         fetchChampDetails(champId)
@@ -54,13 +62,15 @@ function ChampContainer() {
         console.log(`error`, error)
     }
 
-    const filteredChamps = useMemo(
-        () =>
-            champs?.filter((champs) =>
-                champs?.name?.toLowerCase().includes(searchChamps.toLowerCase())
-            ) || [],
-        [champs, searchChamps]
-    )
+    const filteredChamps = useMemo(() => {
+        return (
+            champs?.filter((champ) => {
+                const matchesSearch = champ.name?.toLowerCase().includes(searchChamps.toLowerCase())
+                const matchesRole = selectedRole ? champ.roles.includes(selectedRole) : true
+                return matchesSearch && matchesRole
+            }) || []
+        )
+    }, [champs, searchChamps, selectedRole])
 
     const loadMore = () => {
         setItemToShow((prev) => prev + 10)
@@ -75,6 +85,11 @@ function ChampContainer() {
 
     return (
         <main className="relative w-full">
+            <FilterRoleChamp
+                value={roleChamps || []}
+                key={selectedRole}
+                setSelectedRole={setSelectedRole}
+            />
             <SelectLang
                 value={language}
                 setLanguage={setLanguage}

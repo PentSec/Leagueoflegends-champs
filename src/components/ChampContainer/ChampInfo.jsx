@@ -1,8 +1,26 @@
-import { Image, Modal, ModalBody, ModalContent, ModalFooter, Spinner } from '@nextui-org/react'
+import { Modal, ModalBody, ModalContent, ModalFooter, Spinner } from '@nextui-org/react'
 import ImageGallery from 'react-image-gallery'
+import { buildPositionIndex, getChampionRoles } from '@/utils/roleRates'
+import { useChampionData } from '@/hooks'
+import { useMemo } from 'react'
 
 function ChampInfo({ selectedChamp, isLoadingChamp, onClose }) {
     const s = selectedChamp
+    const { championData, loading } = useChampionData()
+
+    const positionIndex = useMemo(() => {
+        return championData ? buildPositionIndex(championData) : {}
+    }, [championData])
+
+    if (loading) {
+        return <Spinner label="Loading..." />
+    }
+
+    if (!championData) {
+        return <div>Error to load data</div>
+    }
+    const roles = getChampionRoles(s.key, positionIndex)
+
     const images =
         s?.skins.map((skin) => ({
             original: `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${s.id}_${skin.num}.jpg`,
@@ -56,8 +74,19 @@ function ChampInfo({ selectedChamp, isLoadingChamp, onClose }) {
                                     </div>
                                 </div>
                             </section>
-                            <section className="flex items-center justify-center w-full h-auto">
-                                <div className="relative items-center w-full gap-4 p-4 px-6 text-center "></div>
+                            <section className="flex flex-col items-start justify-start w-full p-4">
+                                <h2 className="text-2xl font-bold text-white">Roles del Campeón</h2>
+                                <ul className="mt-2 text-lg text-gray-300">
+                                    {roles.length > 0 ? (
+                                        roles.map(({ role, rate }) => (
+                                            <li key={role}>
+                                                <strong>{role}:</strong> {(rate * 100).toFixed(2)}%
+                                            </li>
+                                        ))
+                                    ) : (
+                                        <p>No hay datos de roles para este campeón.</p>
+                                    )}
+                                </ul>
                             </section>
                         </ModalBody>
                     )

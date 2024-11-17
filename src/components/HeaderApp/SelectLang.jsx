@@ -12,6 +12,7 @@ function SelectLang({ languages, setLanguage, value, isLoadingLang, isErrorLang 
             selectedKey={value}
             onSelectionChange={(key) => setLanguage(key)}
             defaultItems={languages}
+            variant="bordered"
         >
             {languages.map((lang) => (
                 <AutocompleteItem key={lang} value={lang}>

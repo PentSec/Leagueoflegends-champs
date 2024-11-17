@@ -48,6 +48,7 @@ function SelectVersion({ versions, setVersion, value, isLoadingVer, isErrorVer }
             onSelectionChange={(key) => setVersion(key)}
             onInputChange={(text) => setQuery(text)}
             defaultItems={visibleVersions}
+            variant="bordered"
         >
             {visibleVersions.map((item) => (
                 <AutocompleteItem key={item} value={item} textValue={item}>
