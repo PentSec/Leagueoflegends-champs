@@ -1,6 +1,6 @@
 import { Modal, ModalBody, ModalContent, ModalFooter, Spinner } from '@nextui-org/react'
 import ImageGallery from 'react-image-gallery'
-import { buildPositionIndex, getChampionRoles } from '@/utils/roleRates'
+import { buildPositionIndex, getChampionLanes } from '@/utils'
 import { useChampionData } from '@/hooks'
 import { useMemo } from 'react'
 
@@ -19,7 +19,7 @@ function ChampInfo({ selectedChamp, isLoadingChamp, onClose }) {
     if (!championData) {
         return <div>Error to load data</div>
     }
-    const roles = getChampionRoles(s.key, positionIndex)
+    const lanes = getChampionLanes(s.key, positionIndex)
 
     const images =
         s?.skins.map((skin) => ({
@@ -77,14 +77,14 @@ function ChampInfo({ selectedChamp, isLoadingChamp, onClose }) {
                             <section className="flex flex-col items-start justify-start w-full p-4">
                                 <h2 className="text-2xl font-bold text-white">Roles del Campeón</h2>
                                 <ul className="mt-2 text-lg text-gray-300">
-                                    {roles.length > 0 ? (
-                                        roles.map(({ role, rate }) => (
-                                            <li key={role}>
-                                                <strong>{role}:</strong> {(rate * 100).toFixed(2)}%
+                                    {lanes.length > 0 ? (
+                                        lanes.map(({ lane, rate }) => (
+                                            <li key={lane}>
+                                                <strong>{lane}:</strong> {(rate * 100).toFixed(2)}%
                                             </li>
                                         ))
                                     ) : (
-                                        <p>No hay datos de roles para este campeón.</p>
+                                        <p>No hay datos de lanes para este campeón.</p>
                                     )}
                                 </ul>
                             </section>

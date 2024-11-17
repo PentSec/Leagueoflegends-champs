@@ -7,4 +7,12 @@ const roleIcon = {
     Marksman: '/Leagueoflegends-champs/role/marksman.png'
 }
 
-export default roleIcon
+const laneIcon = {
+    TOP: '/Leagueoflegends-champs/lane/top.png',
+    MIDDLE: '/Leagueoflegends-champs/lane/middle.png',
+    BOTTOM: '/Leagueoflegends-champs/lane/bottom.png',
+    SUPPORT: '/Leagueoflegends-champs/lane/support.png',
+    JUNGLE: '/Leagueoflegends-champs/lane/jungle.png'
+}
+
+export default { roleIcon, laneIcon }
