@@ -4,7 +4,7 @@ function SearchChampsComponent({ value, changeValue }) {
     return (
         <Input
             label="Search Champs"
-            variant="underlined"
+            variant="bordered"
             color="primary"
             radius="lg"
             value={value}
