@@ -41,7 +41,7 @@ function TooltipComp({ champ, children }) {
                         </div>
                     </div>
                     <Divider />
-                    <div className="box-border block leading-6 font-spiegel">
+                    <div className="box-border block leading-6">
                         <div className="mt-2 min-w-[250px] ">
                             <div>
                                 <h2 className="font-semibold text-gray-200">Info</h2>

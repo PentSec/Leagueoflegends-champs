@@ -29,7 +29,7 @@ function useGetChamps(language, version) {
                     throw new Error('Failed to fetch champion data')
                 }
 
-                const mappedChamps = mapChamps(Object.values(data.data))
+                const mappedChamps = mapChamps(Object.values(data.data), language)
                 setChamps(mappedChamps)
                 console.log(`champs useGetChamps`, mappedChamps)
             } catch (error) {
@@ -76,7 +76,7 @@ function useGetChamps(language, version) {
     return { champs, isLoading, error, selectedChamp, isLoadingChamp, fetchChampDetails }
 }
 
-function mapChamps(champsData) {
+function mapChamps(champsData, language) {
     return champsData.map((champ) => ({
         id: champ.id,
         name: champ.name,
@@ -123,7 +123,10 @@ function mapChamps(champsData) {
             attackspeedperlevel: champ.stats.attackspeedperlevel
         },
         loadingImage: `https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${champ.id}_0.jpg`,
-        avatarImage: `https://ddragon.leagueoflegends.com/cdn/14.22.1/img/champion/${champ.id}.png`
+        avatarImage: `https://ddragon.leagueoflegends.com/cdn/14.22.1/img/champion/${champ.id}.png`,
+        voice: `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/${language.toLowerCase()}/v1/champion-choose-vo/${
+            champ.key
+        }.ogg`
     }))
 }
 
