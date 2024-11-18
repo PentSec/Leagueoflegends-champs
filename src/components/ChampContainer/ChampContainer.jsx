@@ -11,6 +11,7 @@ import {
     FilterRoleChamp
 } from '@/components'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useEffect } from 'react'
 
 const MotionCard = motion.create(Card)
 
@@ -83,6 +84,14 @@ function ChampContainer() {
         onLoadMore: loadMore
     })
 
+    const hoverSound = useMemo(() => new Audio('/Leagueoflegends-champs/on-hover.ogg'), [])
+    const clickSound = useMemo(() => new Audio('/Leagueoflegends-champs/onopen-select.ogg'), [])
+
+    useEffect(() => {
+        hoverSound.load()
+        clickSound.load()
+    }, [, hoverSound, clickSound])
+
     return (
         <main className="relative w-full">
             <FilterRoleChamp
@@ -123,6 +132,26 @@ function ChampContainer() {
                                     animate="visible"
                                     shadow="md"
                                     onPress={() => openModal(champ.id)}
+                                    onPressStart={() => {
+                                        if (champ.voice) {
+                                            clickSound.pause()
+                                            clickSound.currentTime = 0
+                                            clickSound.play()
+                                            const sound = new Audio(champ.voice)
+                                            sound
+                                                .play()
+                                                .catch((err) =>
+                                                    console.error('Error playing sound:', err)
+                                                )
+                                        } else {
+                                            console.warn('No voice file found for this champion.')
+                                        }
+                                    }}
+                                    onMouseEnter={() => {
+                                        hoverSound.pause()
+                                        hoverSound.currentTime = 0
+                                        hoverSound.play()
+                                    }}
                                     isPressable
                                 >
                                     <Image

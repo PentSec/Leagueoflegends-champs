@@ -75,7 +75,7 @@ function ChampInfo({ selectedChamp, isLoadingChamp, onClose }) {
                                 </div>
                             </section>
                             <section className="flex flex-col items-start justify-start w-full p-4">
-                                <h2 className="text-2xl font-bold text-white">Roles del Campeón</h2>
+                                <h2 className="text-2xl font-bold text-white">Lanes</h2>
                                 <ul className="mt-2 text-lg text-gray-300">
                                     {lanes.length > 0 ? (
                                         lanes.map(({ lane, rate }) => (
@@ -84,7 +84,7 @@ function ChampInfo({ selectedChamp, isLoadingChamp, onClose }) {
                                             </li>
                                         ))
                                     ) : (
-                                        <p>No hay datos de lanes para este campeón.</p>
+                                        <p>dont have data for this champ.</p>
                                     )}
                                 </ul>
                             </section>
