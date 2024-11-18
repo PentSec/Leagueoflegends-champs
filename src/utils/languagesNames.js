@@ -1,0 +1,31 @@
+const LANGUAGE_NAMES = {
+    ar_AE: 'Arabic',
+    en_US: 'English (US)',
+    cs_CZ: 'Czech',
+    de_DE: 'German',
+    el_GR: 'Greek',
+    en_AU: 'English (Australia)',
+    en_GB: 'English (UK)',
+    en_PH: 'English (Philippines)',
+    en_SG: 'English (Singapore)',
+    es_AR: 'Spanish (Argentina)',
+    es_ES: 'Spanish (Spain)',
+    es_MX: 'Spanish (Latino)',
+    fr_FR: 'French',
+    hu_HU: 'Hungarian',
+    it_IT: 'Italian',
+    ja_JP: 'Japanese',
+    ko_KR: 'Korean',
+    pl_PL: 'Polish',
+    pt_BR: 'Portuguese (Brazil)',
+    ro_RO: 'Romanian',
+    ru_RU: 'Russian',
+    th_TH: 'Thai',
+    tr_TR: 'Turkish',
+    vi_VN: 'Vietnamese',
+    zh_CN: 'Chinese (Simplified)',
+    zh_MY: 'Chinese (Malaysia)',
+    zh_TW: 'Chinese (Traditional)'
+}
+
+export default LANGUAGE_NAMES

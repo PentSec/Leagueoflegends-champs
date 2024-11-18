@@ -2,6 +2,11 @@ import { useRef } from 'react'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
+const generateVoiceUrl = (language, champKey) => {
+    const languagePath = language === 'en_US' ? 'default' : language.toLowerCase()
+    return `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/${languagePath}/v1/champion-choose-vo/${champKey}.ogg`
+}
+
 function useGetChamps(language, version) {
     const CHAMPS_DATA = `https://ddragon.leagueoflegends.com/cdn/${version}/data/${language}/champion.json`
     const [champs, setChamps] = useState([])
@@ -53,8 +58,11 @@ function useGetChamps(language, version) {
             errors.forEach((error) => toast(error))
             return
         }
-        if (cache.current[champId]) {
-            setSelectedChamp(cache.current[champId])
+
+        const cacheKey = `${champId}-${language}-${version}`
+
+        if (cache.current[cacheKey]) {
+            setSelectedChamp(cache.current[cacheKey])
             return
         }
 
@@ -63,9 +71,18 @@ function useGetChamps(language, version) {
             setIsLoadingChamp(true)
             const response = await fetch(champUrl)
             const data = await response.json()
-            cache.current[champId] = data.data[champId]
-            setSelectedChamp(data.data[champId])
-            console.log(`champ useGetChamps 2`, data.data[champId])
+
+            const baseChamp = champs.find((champ) => champ.id === champId)
+
+            const detailedChamp = {
+                ...baseChamp,
+                ...data.data[champId],
+                voice: generateVoiceUrl(language, baseChamp?.key || data.data[champId].key)
+            }
+
+            cache.current[cacheKey] = detailedChamp
+            setSelectedChamp(detailedChamp)
+            console.log(`champ useGetChamps 2`, detailedChamp)
         } catch (error) {
             console.error('Error fetching champion details:', error)
         } finally {
@@ -123,10 +140,7 @@ function mapChamps(champsData, language) {
             attackspeedperlevel: champ.stats.attackspeedperlevel
         },
         loadingImage: `https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${champ.id}_0.jpg`,
-        avatarImage: `https://ddragon.leagueoflegends.com/cdn/14.22.1/img/champion/${champ.id}.png`,
-        voice: `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/${language.toLowerCase()}/v1/champion-choose-vo/${
-            champ.key
-        }.ogg`
+        avatarImage: `https://ddragon.leagueoflegends.com/cdn/14.22.1/img/champion/${champ.id}.png`
     }))
 }
 

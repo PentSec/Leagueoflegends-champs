@@ -8,11 +8,11 @@ const roleIcon = {
 }
 
 const laneIcon = {
-    TOP: '/Leagueoflegends-champs/lane/top.png',
-    MIDDLE: '/Leagueoflegends-champs/lane/middle.png',
-    BOTTOM: '/Leagueoflegends-champs/lane/bottom.png',
-    SUPPORT: '/Leagueoflegends-champs/lane/support.png',
-    JUNGLE: '/Leagueoflegends-champs/lane/jungle.png'
+    TOP: '/Leagueoflegends-champs/lane/top.svg',
+    MIDDLE: '/Leagueoflegends-champs/lane/middle.svg',
+    BOTTOM: '/Leagueoflegends-champs/lane/bottom.svg',
+    SUPPORT: '/Leagueoflegends-champs/lane/support.svg',
+    JUNGLE: '/Leagueoflegends-champs/lane/jungle.svg'
 }
 
 export default { roleIcon, laneIcon }

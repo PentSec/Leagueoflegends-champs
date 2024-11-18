@@ -2,11 +2,49 @@ import { Modal, ModalBody, ModalContent, ModalFooter, Spinner } from '@nextui-or
 import ImageGallery from 'react-image-gallery'
 import { buildPositionIndex, getChampionLanes } from '@/utils'
 import { useChampionData } from '@/hooks'
-import { useMemo } from 'react'
+import { useMemo, useEffect, useState } from 'react'
 
-function ChampInfo({ selectedChamp, isLoadingChamp, onClose }) {
+function ChampInfo({ selectedChamp = {}, isLoadingChamp, onClose }) {
     const s = selectedChamp
+    if (!s) {
+        return <div>Loading champion data...</div>
+    }
     const { championData, loading } = useChampionData()
+    const [isModalFullyLoaded, setIsModalFullyLoaded] = useState(false)
+
+    const voiceChamp = useMemo(() => {
+        console.log('voiceChamp', s?.voice)
+        console.log(`champselect`, s)
+        if (!s?.voice) return null
+        const audio = new Audio(s.voice)
+        audio.load()
+        return audio
+    }, [s?.voice])
+
+    useEffect(() => {
+        if (isModalFullyLoaded && voiceChamp) {
+            voiceChamp.currentTime = 0
+            voiceChamp
+                .play()
+                .catch((error) => console.error('Error al reproducir el audio:', error))
+        }
+
+        return () => {
+            if (voiceChamp) {
+                voiceChamp.pause()
+                voiceChamp.currentTime = 0
+            }
+        }
+    }, [isModalFullyLoaded, voiceChamp])
+
+    useEffect(() => {
+        if (!isLoadingChamp) {
+            const timeout = setTimeout(() => {
+                setIsModalFullyLoaded(true)
+            }, 500)
+            return () => clearTimeout(timeout)
+        }
+    }, [isLoadingChamp])
 
     const positionIndex = useMemo(() => {
         return championData ? buildPositionIndex(championData) : {}
@@ -22,7 +60,7 @@ function ChampInfo({ selectedChamp, isLoadingChamp, onClose }) {
     const lanes = getChampionLanes(s.key, positionIndex)
 
     const images =
-        s?.skins.map((skin) => ({
+        s?.skins?.map((skin) => ({
             original: `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${s.id}_${skin.num}.jpg`,
             thumbnail: `https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${s.id}_${skin.num}.jpg`,
             description: skin.name,
@@ -35,7 +73,7 @@ function ChampInfo({ selectedChamp, isLoadingChamp, onClose }) {
             scrollBehavior="inside"
             backdrop="blur"
             size="full"
-            isOpen={true}
+            isOpen={!!s}
             onClose={onClose}
             classNames={{
                 body: 'py-6',
