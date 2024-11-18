@@ -9,6 +9,19 @@ function SelectVersion({ versions, setVersion, value, isLoadingVer, isErrorVer }
     const [query, setQuery] = useState('')
 
     useEffect(() => {
+        const storedVersion = localStorage.getItem('selectedVersion')
+        if (storedVersion) {
+            setVersion(storedVersion)
+        }
+    }, [setVersion])
+
+    useEffect(() => {
+        if (value) {
+            localStorage.setItem('selectedVersion', value)
+        }
+    }, [value])
+
+    useEffect(() => {
         if (query) {
             setVisibleVersions(
                 versions.filter((version) => version.toLowerCase().includes(query.toLowerCase()))

@@ -31,7 +31,7 @@ function ChampContainer() {
     const [itemToShow, setItemToShow] = useState(50)
     const [searchChamps, setSearchChamps] = useState('')
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [language, setLanguage] = useState('es_MX')
+    const [language, setLanguage] = useState('es_US')
     const [version, setVersion] = useState('14.22.1')
     const [selectedRole, setSelectedRole] = useState('')
     const { versions, isLoadingVersion, errorVersion } = useGetVersion()
@@ -133,19 +133,9 @@ function ChampContainer() {
                                     shadow="md"
                                     onPress={() => openModal(champ.id)}
                                     onPressStart={() => {
-                                        if (champ.voice) {
-                                            clickSound.pause()
-                                            clickSound.currentTime = 0
-                                            clickSound.play()
-                                            const sound = new Audio(champ.voice)
-                                            sound
-                                                .play()
-                                                .catch((err) =>
-                                                    console.error('Error playing sound:', err)
-                                                )
-                                        } else {
-                                            console.warn('No voice file found for this champion.')
-                                        }
+                                        clickSound.pause()
+                                        clickSound.currentTime = 0
+                                        clickSound.play()
                                     }}
                                     onMouseEnter={() => {
                                         hoverSound.pause()
