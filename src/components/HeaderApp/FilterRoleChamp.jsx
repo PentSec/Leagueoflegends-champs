@@ -1,4 +1,4 @@
-import { Checkbox, Avatar, CheckboxGroup } from '@nextui-org/react'
+import { Checkbox, Avatar, CheckboxGroup, Tooltip } from '@nextui-org/react'
 import { roleIcon } from '@/utils'
 import { useState } from 'react'
 
@@ -32,13 +32,15 @@ const FilterRoleChamp = ({ value, key, setSelectedRole }) => {
                         label: 'm-0 p-0'
                     }}
                 >
-                    <Avatar
-                        isBordered={selectedRole === role}
-                        src={roleIcon[role]}
-                        alt={role}
-                        radius="sm"
-                        className="flex-shrink-0"
-                    />
+                    <Tooltip content={role}>
+                        <Avatar
+                            isBordered={selectedRole === role}
+                            src={roleIcon[role]}
+                            alt={role}
+                            radius="sm"
+                            className="flex-shrink-0"
+                        />
+                    </Tooltip>
                 </Checkbox>
             ))}
         </CheckboxGroup>

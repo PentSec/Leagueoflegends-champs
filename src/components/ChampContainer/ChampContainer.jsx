@@ -105,7 +105,7 @@ function ChampContainer() {
                 <div>Error al cargar los datos de lanes</div>
             ) : (
                 <>
-                    <div className="flex items-center justify-between gap-4 mb-4">
+                    <div className="flex flex-col items-center gap-4 mb-4 lg:flex-row">
                         <SelectLang
                             value={language}
                             setLanguage={setLanguage}
