@@ -27,12 +27,13 @@ function SelectLang({ languages, setLanguage, value, isLoadingLang, isErrorLang 
     return (
         <Autocomplete
             label="Language"
-            className="mb-4"
             isLoading={isLoadingLang}
             selectedKey={value}
             onSelectionChange={(key) => setLanguage(key)}
             defaultItems={mappedLanguages}
             variant="bordered"
+            radius="sm"
+            size="sm"
         >
             {mappedLanguages.map(({ code, name }) => (
                 <AutocompleteItem key={code} value={code}>

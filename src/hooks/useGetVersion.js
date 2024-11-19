@@ -17,7 +17,6 @@ function useGetVersion() {
                 }
                 const data = await response.json()
                 setVersions(data)
-                console.log(`versions useGetVersion`, data)
             } catch (error) {
                 console.error('Error fetching version:', error)
                 setErrorVersion(error)

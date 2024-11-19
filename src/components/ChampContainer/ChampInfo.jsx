@@ -1,25 +1,26 @@
 import { Modal, ModalBody, ModalContent, ModalFooter, Spinner } from '@nextui-org/react'
 import ImageGallery from 'react-image-gallery'
 import { buildPositionIndex, getChampionLanes } from '@/utils'
-import { useChampionData } from '@/hooks'
 import { useMemo, useEffect, useState } from 'react'
 
-function ChampInfo({ selectedChamp = {}, isLoadingChamp, onClose }) {
-    const s = selectedChamp
-    if (!s) {
+function ChampInfo({ selectedChamp = {}, isLoadingChamp, onClose, lanesRates }) {
+    const c = selectedChamp
+    if (!c) {
         return <div>Loading champion data...</div>
     }
-    const { championData, loading } = useChampionData()
     const [isModalFullyLoaded, setIsModalFullyLoaded] = useState(false)
+    const positionIndex = useMemo(() => {
+        return lanesRates ? buildPositionIndex(lanesRates) : {}
+    }, [lanesRates])
+
+    const lanes = getChampionLanes(c.key, positionIndex)
 
     const voiceChamp = useMemo(() => {
-        console.log('voiceChamp', s?.voice)
-        console.log(`champselect`, s)
-        if (!s?.voice) return null
-        const audio = new Audio(s.voice)
+        if (!c?.voice) return null
+        const audio = new Audio(c.voice)
         audio.load()
         return audio
-    }, [s?.voice])
+    }, [c?.voice])
 
     useEffect(() => {
         if (isModalFullyLoaded && voiceChamp) {
@@ -46,23 +47,10 @@ function ChampInfo({ selectedChamp = {}, isLoadingChamp, onClose }) {
         }
     }, [isLoadingChamp])
 
-    const positionIndex = useMemo(() => {
-        return championData ? buildPositionIndex(championData) : {}
-    }, [championData])
-
-    if (loading) {
-        return <Spinner label="Loading..." />
-    }
-
-    if (!championData) {
-        return <div>Error to load data</div>
-    }
-    const lanes = getChampionLanes(s.key, positionIndex)
-
     const images =
-        s?.skins?.map((skin) => ({
-            original: `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${s.id}_${skin.num}.jpg`,
-            thumbnail: `https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${s.id}_${skin.num}.jpg`,
+        c?.skins?.map((skin) => ({
+            original: `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${c.id}_${skin.num}.jpg`,
+            thumbnail: `https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${c.id}_${skin.num}.jpg`,
             description: skin.name,
             originalAlt: skin.name,
             thumbnailAlt: skin.name
@@ -73,7 +61,7 @@ function ChampInfo({ selectedChamp = {}, isLoadingChamp, onClose }) {
             scrollBehavior="inside"
             backdrop="blur"
             size="full"
-            isOpen={!!s}
+            isOpen={!!c}
             onClose={onClose}
             classNames={{
                 body: 'py-6',
@@ -87,7 +75,7 @@ function ChampInfo({ selectedChamp = {}, isLoadingChamp, onClose }) {
                 {isLoadingChamp ? (
                     <Spinner color="white" />
                 ) : (
-                    s && (
+                    c && (
                         <ModalBody>
                             <section className="relative flex flex-col items-center justify-center p-4">
                                 <div className="absolute top-1 left-0 w-full h-full z-10 bg-gradient-to-r from-[#0d1117] from-15% via-[#0d1117]/30 via-40% to-slate-500/0 to-90% rounded-lg pointer-events-none" />
@@ -101,25 +89,23 @@ function ChampInfo({ selectedChamp = {}, isLoadingChamp, onClose }) {
 
                                 <div className="z-20 flex flex-col items-start justify-start gap-2 p-4 pointer-events-none lg:absolute left-40 text-start">
                                     <h1 className="font-extrabold text-white uppercase text-7xl font-beaufortBold">
-                                        {s.name}
+                                        {c.name}
                                     </h1>
                                     <span className="text-4xl italic font-bold text-teal-400 uppercase font-beaufortBold">
-                                        {s.title}
+                                        {c.title}
                                     </span>
 
                                     <div className="grid grid-cols-3 gap-4 mt-2 font-spiegel text-default-foreground">
-                                        <p>{s.lore}</p>
+                                        <p>{c.lore}</p>
                                     </div>
                                 </div>
                             </section>
                             <section className="flex flex-col items-start justify-start w-full p-4">
-                                <h2 className="text-2xl font-bold text-white">Lanes</h2>
+                                <h2 className="text-2xl font-bold text-white">theLanes</h2>
                                 <ul className="mt-2 text-lg text-gray-300">
                                     {lanes.length > 0 ? (
                                         lanes.map(({ lane, rate }) => (
-                                            <li key={lane}>
-                                                <strong>{lane}:</strong> {(rate * 100).toFixed(2)}%
-                                            </li>
+                                            <li key={lane}>{(rate * 100).toFixed(2)}%</li>
                                         ))
                                     ) : (
                                         <p>dont have data for this champ.</p>

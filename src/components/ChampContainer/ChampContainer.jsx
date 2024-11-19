@@ -1,4 +1,4 @@
-import { useGetChamps, useGetVersion, useGetLang } from '@/hooks'
+import { useGetChamps, useGetVersion, useGetLang, useGetLanesRates } from '@/hooks'
 import { ScrollShadow, Card, Image, Spinner } from '@nextui-org/react'
 import { useState, useMemo } from 'react'
 import { useInfiniteScroll } from '@nextui-org/use-infinite-scroll'
@@ -28,12 +28,16 @@ const cardVariants = {
 }
 
 function ChampContainer() {
-    const [itemToShow, setItemToShow] = useState(50)
+    //const states
+    const [itemToShow, setItemToShow] = useState(20)
     const [searchChamps, setSearchChamps] = useState('')
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [language, setLanguage] = useState('es_US')
+    const [language, setLanguage] = useState('en_US')
     const [version, setVersion] = useState('14.22.1')
     const [selectedRole, setSelectedRole] = useState('')
+
+    //const by hooks
+    const { lanesRates, loadingLane } = useGetLanesRates()
     const { versions, isLoadingVersion, errorVersion } = useGetVersion()
     const { languages, isLoadingLang, errorLang } = useGetLang()
     const { champs, isLoading, error, selectedChamp, isLoadingChamp, fetchChampDetails } =
@@ -44,7 +48,6 @@ function ChampContainer() {
         const allRoles = champs.flatMap((champ) => champ.roles)
         return Array.from(new Set(allRoles))
     }, [champs])
-    console.log(`roleChamps`, roleChamps)
 
     const openModal = (champId) => {
         fetchChampDetails(champId)
@@ -90,86 +93,98 @@ function ChampContainer() {
     useEffect(() => {
         hoverSound.load()
         clickSound.load()
-    }, [, hoverSound, clickSound])
+    }, [hoverSound, clickSound])
 
     return (
         <main className="relative w-full">
-            <FilterRoleChamp
-                value={roleChamps || []}
-                key={selectedRole}
-                setSelectedRole={setSelectedRole}
-            />
-            <SelectLang
-                value={language}
-                setLanguage={setLanguage}
-                languages={languages}
-                isLoadingLang={isLoadingLang}
-                isErrorLang={errorLang}
-            />
-            <SelectVersion
-                value={version}
-                setVersion={setVersion}
-                versions={versions}
-                isLoadingVer={isLoadingVersion}
-                isErrorVer={errorVersion}
-            />
-            <SearchChampsComponent value={searchChamps} changeValue={setSearchChamps} />
-            <ScrollShadow
-                className="h-[calc(85vh-32px)] overflow-auto p-12 gap-4"
-                ref={scrollerRef}
-            >
-                <div className="grid grid-cols-3 gap-4 p-2 mb-4 lg:grid-cols-6">
-                    {filteredChamps.slice(0, itemToShow).map((champ) => (
-                        <AnimatePresence key={champ.id}>
-                            <TooltipComp champ={champ}>
-                                <MotionCard
-                                    isHoverable
-                                    variants={cardVariants}
-                                    key={champ.id}
-                                    className="relative z-30 items-center content-center justify-center bg-transparent border-none w-fit h-fit"
-                                    transition={{ duration: 0.2, delay: champ.id * 0.1 }}
-                                    initial="hidden"
-                                    animate="visible"
-                                    shadow="md"
-                                    onPress={() => openModal(champ.id)}
-                                    onPressStart={() => {
-                                        clickSound.pause()
-                                        clickSound.currentTime = 0
-                                        clickSound.play()
-                                    }}
-                                    onMouseEnter={() => {
-                                        hoverSound.pause()
-                                        hoverSound.currentTime = 0
-                                        hoverSound.play()
-                                    }}
-                                    isPressable
-                                >
-                                    <Image
-                                        isZoomed
-                                        radius="none"
-                                        width="100%"
-                                        height="100%"
-                                        alt={champ.name}
-                                        src={champ.loadingImage}
-                                        className="border-none object-cover w-full h-full max-w-[350px] max-h-[350px] z-0"
-                                    />
-                                </MotionCard>
-                            </TooltipComp>
-                        </AnimatePresence>
-                    ))}
+            {loadingLane ? (
+                <div className="flex items-center justify-center h-screen">
+                    <Spinner label="Loading lanes rates..." />
                 </div>
-                {hasMore && (
-                    <div className="flex justify-center w-full">
-                        <Spinner ref={loaderRef} color="white" />
+            ) : !lanesRates ? (
+                <div>Error al cargar los datos de lanes</div>
+            ) : (
+                <>
+                    <div className="flex items-center justify-between gap-4 mb-4">
+                        <SelectLang
+                            value={language}
+                            setLanguage={setLanguage}
+                            languages={languages}
+                            isLoadingLang={isLoadingLang}
+                            isErrorLang={errorLang}
+                        />
+                        <SelectVersion
+                            value={version}
+                            setVersion={setVersion}
+                            versions={versions}
+                            isLoadingVer={isLoadingVersion}
+                            isErrorVer={errorVersion}
+                        />
+                        <SearchChampsComponent value={searchChamps} changeValue={setSearchChamps} />
                     </div>
-                )}
-            </ScrollShadow>
-            {isModalOpen && (
-                <ChampInfo
-                    selectedChamp={selectedChamp}
-                    isLoadingChamp={isLoadingChamp}
-                    onClose={closeModal}
-                />
+                    <FilterRoleChamp
+                        value={roleChamps || []}
+                        initialKey={selectedRole}
+                        setSelectedRole={setSelectedRole}
+                    />
+                    <ScrollShadow
+                        className="h-[calc(85vh-32px)] overflow-auto p-12 gap-4"
+                        ref={scrollerRef}
+                    >
+                        <div className="grid grid-cols-3 gap-4 p-2 mb-4 lg:grid-cols-6">
+                            {filteredChamps.slice(0, itemToShow).map((champ) => (
+                                <AnimatePresence key={champ.id}>
+                                    <TooltipComp selectedChamp={champ} lanesRates={lanesRates}>
+                                        <MotionCard
+                                            isHoverable
+                                            variants={cardVariants}
+                                            key={champ.id}
+                                            className="relative z-30 items-center content-center justify-center bg-transparent border-none w-fit h-fit"
+                                            initial="hidden"
+                                            animate="visible"
+                                            shadow="md"
+                                            onPress={() => openModal(champ.id)}
+                                            onPressStart={() => {
+                                                clickSound.pause()
+                                                clickSound.currentTime = 0
+                                                clickSound.play()
+                                            }}
+                                            onMouseEnter={() => {
+                                                hoverSound.pause()
+                                                hoverSound.currentTime = 0
+                                                hoverSound.play()
+                                            }}
+                                            isPressable
+                                        >
+                                            <Image
+                                                isZoomed
+                                                radius="none"
+                                                width="100%"
+                                                height="100%"
+                                                alt={champ.name}
+                                                src={champ.loadingImage}
+                                                className="border-none object-cover w-full h-full max-w-[350px] max-h-[350px] z-0"
+                                            />
+                                        </MotionCard>
+                                    </TooltipComp>
+                                </AnimatePresence>
+                            ))}
+                        </div>
+                        {hasMore && (
+                            <div className="flex justify-center w-full">
+                                <Spinner ref={loaderRef} color="white" />
+                            </div>
+                        )}
+                    </ScrollShadow>
+                    {isModalOpen && (
+                        <ChampInfo
+                            lanesRates={lanesRates}
+                            selectedChamp={selectedChamp}
+                            isLoadingChamp={isLoadingChamp}
+                            onClose={closeModal}
+                        />
+                    )}
+                </>
             )}
         </main>
     )
