@@ -4,9 +4,9 @@ function SearchChampsComponent({ value, changeValue }) {
     return (
         <Input
             label="Search Champs"
+            radius="sm"
+            size="sm"
             variant="bordered"
-            color="primary"
-            radius="lg"
             value={value}
             onChange={(e) => changeValue(e.target.value)}
         />

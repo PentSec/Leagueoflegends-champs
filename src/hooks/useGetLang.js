@@ -19,7 +19,6 @@ function useGetLang() {
                 const data = await response.json()
 
                 setLanguages(data)
-                console.log(`languages useGetLang`, data)
             } catch (error) {
                 console.error('Error fetching language:', error)
                 setErrorLang(error)

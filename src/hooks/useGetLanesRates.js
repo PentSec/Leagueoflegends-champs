@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 
-function useChampionData() {
-    const [championData, setChampionData] = useState(null)
-    const [loading, setLoading] = useState(true)
+function useGetLanesRates() {
+    const [lanesRates, setLanesRates] = useState(null)
+    const [loadingLane, setLoadingLane] = useState(true)
 
     useEffect(() => {
         async function fetchData() {
@@ -17,21 +17,21 @@ function useChampionData() {
                 if (jsonMatch && jsonMatch[1]) {
                     const rawJson = jsonMatch[1]
                     const parsedJson = JSON.parse(rawJson)
-                    setChampionData(parsedJson)
+                    setLanesRates(parsedJson)
                 } else {
                     console.error('No se encontró JSON en el script.')
                 }
             } catch (error) {
                 console.error('Error al obtener los datos:', error)
             } finally {
-                setLoading(false)
+                setLoadingLane(false)
             }
         }
 
         fetchData()
     }, [])
 
-    return { championData, loading }
+    return { lanesRates, loadingLane }
 }
 
-export default useChampionData
+export default useGetLanesRates

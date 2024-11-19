@@ -36,7 +36,6 @@ function useGetChamps(language, version) {
 
                 const mappedChamps = mapChamps(Object.values(data.data), language)
                 setChamps(mappedChamps)
-                console.log(`champs useGetChamps`, mappedChamps)
             } catch (error) {
                 console.error('Error fetching champion data:', error)
                 setError(error)
@@ -82,7 +81,6 @@ function useGetChamps(language, version) {
 
             cache.current[cacheKey] = detailedChamp
             setSelectedChamp(detailedChamp)
-            console.log(`champ useGetChamps 2`, detailedChamp)
         } catch (error) {
             console.error('Error fetching champion details:', error)
         } finally {

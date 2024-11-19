@@ -53,7 +53,6 @@ function SelectVersion({ versions, setVersion, value, isLoadingVer, isErrorVer }
     return (
         <Autocomplete
             label="Version"
-            className="mb-4"
             isLoading={isLoadingVer}
             scrollRef={scrollerRef}
             onOpenChange={setIsOpen}
@@ -62,6 +61,8 @@ function SelectVersion({ versions, setVersion, value, isLoadingVer, isErrorVer }
             onInputChange={(text) => setQuery(text)}
             defaultItems={visibleVersions}
             variant="bordered"
+            radius="sm"
+            size="sm"
         >
             {visibleVersions.map((item) => (
                 <AutocompleteItem key={item} value={item} textValue={item}>
