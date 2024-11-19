@@ -101,11 +101,13 @@ function ChampInfo({ selectedChamp = {}, isLoadingChamp, onClose, lanesRates }) 
                                 </div>
                             </section>
                             <section className="flex flex-col items-start justify-start w-full p-4">
-                                <h2 className="text-2xl font-bold text-white">theLanes</h2>
+                                <h2 className="text-2xl font-bold text-white">Lane</h2>
                                 <ul className="mt-2 text-lg text-gray-300">
                                     {lanes.length > 0 ? (
                                         lanes.map(({ lane, rate }) => (
-                                            <li key={lane}>{(rate * 100).toFixed(2)}%</li>
+                                            <li key={lane}>
+                                                {lane} {(rate * 100).toFixed(2)}%
+                                            </li>
                                         ))
                                     ) : (
                                         <p>dont have data for this champ.</p>
