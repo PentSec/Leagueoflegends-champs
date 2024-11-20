@@ -1,4 +1,4 @@
-import { Checkbox, Avatar, CheckboxGroup } from '@nextui-org/react'
+import { Checkbox, Avatar, CheckboxGroup, Tooltip, AvatarGroup } from '@nextui-org/react'
 import { roleIcon } from '@/utils'
 import { useState } from 'react'
 
@@ -14,7 +14,6 @@ const FilterRoleChamp = ({ value, key, setSelectedRole }) => {
     return (
         <CheckboxGroup
             aria-label="Filter by Role"
-            className="ml-10"
             defaultValue={key}
             onChange={handleSelectionChange}
             orientation="horizontal"
@@ -24,7 +23,7 @@ const FilterRoleChamp = ({ value, key, setSelectedRole }) => {
                 <Checkbox
                     key={role}
                     value={role}
-                    size="lg"
+                    size="sm"
                     className="gap-0 p-0"
                     classNames={{
                         base: 'm-0',
@@ -32,13 +31,15 @@ const FilterRoleChamp = ({ value, key, setSelectedRole }) => {
                         label: 'm-0 p-0'
                     }}
                 >
-                    <Avatar
-                        isBordered={selectedRole === role}
-                        src={roleIcon[role]}
-                        alt={role}
-                        radius="sm"
-                        className="flex-shrink-0"
-                    />
+                    <Tooltip content={role}>
+                        <Avatar
+                            isBordered={selectedRole === role}
+                            src={roleIcon[role]}
+                            alt={role}
+                            radius="sm"
+                            className="flex-shrink-0 transition duration-300 ease-in-out scale-125 bg-transparent w-7 h-7 hover:-translate-y-1 hover:scale-150"
+                        />
+                    </Tooltip>
                 </Checkbox>
             ))}
         </CheckboxGroup>

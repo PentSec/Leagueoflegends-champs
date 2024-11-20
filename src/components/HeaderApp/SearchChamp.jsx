@@ -1,6 +1,6 @@
 import { Input } from '@nextui-org/react'
 
-function SearchChampsComponent({ value, changeValue }) {
+function SearchChamps({ value, changeValue }) {
     return (
         <Input
             label="Search Champs"
@@ -9,8 +9,9 @@ function SearchChampsComponent({ value, changeValue }) {
             variant="bordered"
             value={value}
             onChange={(e) => changeValue(e.target.value)}
+            className="w-36"
         />
     )
 }
 
-export default SearchChampsComponent
+export default SearchChamps

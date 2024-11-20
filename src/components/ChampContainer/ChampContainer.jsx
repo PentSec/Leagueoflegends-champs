@@ -1,14 +1,15 @@
 import { useGetChamps, useGetVersion, useGetLang, useGetLanesRates } from '@/hooks'
-import { ScrollShadow, Card, Image, Spinner } from '@nextui-org/react'
+import { ScrollShadow, Card, Image, Spinner, CardBody, Divider } from '@nextui-org/react'
 import { useState, useMemo } from 'react'
 import { useInfiniteScroll } from '@nextui-org/use-infinite-scroll'
 import {
-    SearchChampsComponent,
+    SearchChamps,
     TooltipComp,
     ChampInfo,
     SelectVersion,
     SelectLang,
-    FilterRoleChamp
+    FilterRoleChamp,
+    SelectLanes
 } from '@/components'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useEffect } from 'react'
@@ -35,6 +36,7 @@ function ChampContainer() {
     const [language, setLanguage] = useState('en_US')
     const [version, setVersion] = useState('14.22.1')
     const [selectedRole, setSelectedRole] = useState('')
+    const [selectedLane, setSelectedLane] = useState('')
 
     //const by hooks
     const { lanesRates, loadingLane } = useGetLanesRates()
@@ -48,6 +50,8 @@ function ChampContainer() {
         const allRoles = champs.flatMap((champ) => champ.roles)
         return Array.from(new Set(allRoles))
     }, [champs])
+
+    console.log(`lanes`, lanesRates)
 
     const openModal = (champId) => {
         fetchChampDetails(champId)
@@ -71,10 +75,13 @@ function ChampContainer() {
             champs?.filter((champ) => {
                 const matchesSearch = champ.name?.toLowerCase().includes(searchChamps.toLowerCase())
                 const matchesRole = selectedRole ? champ.roles.includes(selectedRole) : true
-                return matchesSearch && matchesRole
+                const matchesLane = selectedLane
+                    ? lanesRates[selectedLane]?.[champ.key] !== undefined
+                    : true
+                return matchesSearch && matchesRole && matchesLane
             }) || []
         )
-    }, [champs, searchChamps, selectedRole])
+    }, [champs, searchChamps, selectedRole, selectedLane])
 
     const loadMore = () => {
         setItemToShow((prev) => prev + 10)
@@ -101,11 +108,12 @@ function ChampContainer() {
                 <div className="flex items-center justify-center h-screen">
                     <Spinner label="Loading lanes rates..." />
                 </div>
-            ) : !lanesRates ? (
-                <div>Error al cargar los datos de lanes</div>
+                 ) : !lanesRates ? (
+                <div>Error to get lanes</div>
             ) : (
                 <>
-                    <div className="flex items-center justify-between gap-4 mb-4">
+                    <div className="flex flex-col items-center justify-center gap-2 mb-4 lg:flex-row">
+                        <SearchChamps value={searchChamps} changeValue={setSearchChamps} />
                         <SelectLang
                             value={language}
                             setLanguage={setLanguage}
@@ -120,13 +128,22 @@ function ChampContainer() {
                             isLoadingVer={isLoadingVersion}
                             isErrorVer={errorVersion}
                         />
-                        <SearchChampsComponent value={searchChamps} changeValue={setSearchChamps} />
+                      <Card radius="sm">
+                            <CardBody className="flex flex-col items-center justify-center lg:flex-row text-small h-[47px] gap-1">
+                                <FilterRoleChamp
+                                    value={roleChamps || []}
+                                    initialKey={selectedRole}
+                                    setSelectedRole={setSelectedRole}
+                                />
+                                <Divider orientation="vertical" className="mx-2" />
+                                <SelectLanes
+                                    value={selectedLane}
+                                    onChangeValue={setSelectedLane}
+                                    selectLanes={lanesRates}
+                                />
+                            </CardBody>
+                        </Card>
                     </div>
-                    <FilterRoleChamp
-                        value={roleChamps || []}
-                        initialKey={selectedRole}
-                        setSelectedRole={setSelectedRole}
-                    />
                     <ScrollShadow
                         className="h-[calc(85vh-32px)] overflow-auto p-12 gap-4"
                         ref={scrollerRef}

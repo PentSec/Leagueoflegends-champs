@@ -108,8 +108,8 @@ function TooltipComp({ selectedChamp, lanesRates, children }) {
                                             </div>
                                         </li>
                                     ))
-                                ) : (
-                                    <p>No hay datos de roles para este campeón.</p>
+) : (
+                                    <p>Dont have date for this champion</p>
                                 )}
                             </ul>
                             <h2 className="font-semibold text-gray-200">Roles</h2>
