@@ -30,7 +30,7 @@ const SelectLanes = ({ selectLanes, onChangeValue, value }) => {
                                 src={laneIcon[lane]}
                                 alt={lane}
                                 radius="sm"
-                                className="flex-shrink-0 w-7 h-7 text-tiny"
+                                className="flex-shrink-0 transition duration-300 ease-in-out bg-transparent w-7 h-7 hover:-translate-y-1 hover:scale-125"
                             />
                         </Tooltip>
                     </Checkbox>

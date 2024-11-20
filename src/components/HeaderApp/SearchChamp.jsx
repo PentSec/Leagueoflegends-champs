@@ -9,7 +9,7 @@ function SearchChamps({ value, changeValue }) {
             variant="bordered"
             value={value}
             onChange={(e) => changeValue(e.target.value)}
-            className="w-96"
+            className="w-36"
         />
     )
 }

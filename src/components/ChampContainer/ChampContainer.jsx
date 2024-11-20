@@ -1,5 +1,5 @@
 import { useGetChamps, useGetVersion, useGetLang, useGetLanesRates } from '@/hooks'
-import { ScrollShadow, Card, Image, Spinner } from '@nextui-org/react'
+import { ScrollShadow, Card, Image, Spinner, CardBody, Divider } from '@nextui-org/react'
 import { useState, useMemo } from 'react'
 import { useInfiniteScroll } from '@nextui-org/use-infinite-scroll'
 import {
@@ -112,7 +112,7 @@ function ChampContainer() {
                 <div>Error to get lanes</div>
             ) : (
                 <>
-                    <div className="flex flex-col items-center justify-start gap-4 mb-4 lg:flex-row">
+                    <div className="flex flex-col items-center justify-center gap-2 mb-4 lg:flex-row">
                         <SearchChamps value={searchChamps} changeValue={setSearchChamps} />
                         <SelectLang
                             value={language}
@@ -128,16 +128,21 @@ function ChampContainer() {
                             isLoadingVer={isLoadingVersion}
                             isErrorVer={errorVersion}
                         />
-                        <FilterRoleChamp
-                            value={roleChamps || []}
-                            initialKey={selectedRole}
-                            setSelectedRole={setSelectedRole}
-                        />
-                        <SelectLanes
-                            value={selectedLane}
-                            onChangeValue={setSelectedLane}
-                            selectLanes={lanesRates}
-                        />
+                        <Card radius="sm">
+                            <CardBody className="flex flex-col items-center justify-center lg:flex-row text-small h-[47px] gap-1">
+                                <FilterRoleChamp
+                                    value={roleChamps || []}
+                                    initialKey={selectedRole}
+                                    setSelectedRole={setSelectedRole}
+                                />
+                                <Divider orientation="vertical" className="mx-2" />
+                                <SelectLanes
+                                    value={selectedLane}
+                                    onChangeValue={setSelectedLane}
+                                    selectLanes={lanesRates}
+                                />
+                            </CardBody>
+                        </Card>
                     </div>
                     <ScrollShadow
                         className="h-[calc(85vh-32px)] overflow-auto p-12 gap-4"
