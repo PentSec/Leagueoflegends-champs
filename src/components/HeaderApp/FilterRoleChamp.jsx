@@ -14,7 +14,6 @@ const FilterRoleChamp = ({ value, key, setSelectedRole }) => {
     return (
         <CheckboxGroup
             aria-label="Filter by Role"
-            className="ml-10"
             defaultValue={key}
             onChange={handleSelectionChange}
             orientation="horizontal"
@@ -24,7 +23,7 @@ const FilterRoleChamp = ({ value, key, setSelectedRole }) => {
                 <Checkbox
                     key={role}
                     value={role}
-                    size="lg"
+                    size="sm"
                     className="gap-0 p-0"
                     classNames={{
                         base: 'm-0',
@@ -38,7 +37,7 @@ const FilterRoleChamp = ({ value, key, setSelectedRole }) => {
                             src={roleIcon[role]}
                             alt={role}
                             radius="sm"
-                            className="flex-shrink-0"
+                            className="flex-shrink-0 w-7 h-7 text-tiny"
                         />
                     </Tooltip>
                 </Checkbox>

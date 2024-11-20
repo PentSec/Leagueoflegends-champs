@@ -11,7 +11,7 @@ const laneIcon = {
     TOP: '/Leagueoflegends-champs/lane/top.svg',
     MIDDLE: '/Leagueoflegends-champs/lane/middle.svg',
     BOTTOM: '/Leagueoflegends-champs/lane/bottom.svg',
-    SUPPORT: '/Leagueoflegends-champs/lane/support.svg',
+    SUPPORT: '/Leagueoflegends-champs/lane/utility.svg',
     JUNGLE: '/Leagueoflegends-champs/lane/jungle.svg'
 }
 

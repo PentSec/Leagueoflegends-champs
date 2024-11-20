@@ -63,6 +63,7 @@ function SelectVersion({ versions, setVersion, value, isLoadingVer, isErrorVer }
             variant="bordered"
             radius="sm"
             size="sm"
+            className="w-[450px]"
         >
             {visibleVersions.map((item) => (
                 <AutocompleteItem key={item} value={item} textValue={item}>
