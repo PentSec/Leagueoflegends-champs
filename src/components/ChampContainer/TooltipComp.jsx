@@ -108,7 +108,7 @@ function TooltipComp({ selectedChamp, lanesRates, children }) {
                                             </div>
                                         </li>
                                     ))
-                                ) : (
+) : (
                                     <p>Dont have date for this champion</p>
                                 )}
                             </ul>

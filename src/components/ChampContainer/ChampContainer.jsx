@@ -108,7 +108,7 @@ function ChampContainer() {
                 <div className="flex items-center justify-center h-screen">
                     <Spinner label="Loading lanes rates..." />
                 </div>
-            ) : !lanesRates ? (
+                 ) : !lanesRates ? (
                 <div>Error to get lanes</div>
             ) : (
                 <>
@@ -128,7 +128,7 @@ function ChampContainer() {
                             isLoadingVer={isLoadingVersion}
                             isErrorVer={errorVersion}
                         />
-                        <Card radius="sm">
+                      <Card radius="sm">
                             <CardBody className="flex flex-col items-center justify-center lg:flex-row text-small h-[47px] gap-1">
                                 <FilterRoleChamp
                                     value={roleChamps || []}
