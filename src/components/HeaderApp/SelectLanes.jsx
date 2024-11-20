@@ -1,30 +1,3 @@
-// import { Select, SelectItem } from '@nextui-org/react'
-
-// const SelectLanes = ({ selectLanes, onChangeValue, value }) => {
-//     const lanesArray = Object.keys(selectLanes || {})
-
-//     return (
-//         <Select
-//             aria-label="Select Lane"
-//             className="ml-10"
-//             defaultValue={''}
-//             value={value}
-//             onChange={(e) => onChangeValue(e.target.value)}
-//             orientation="horizontal"
-//             hideSelectedIcon
-//             size="lg"
-//         >
-//             {lanesArray.map((lane) => (
-//                 <SelectItem key={lane} value={lane}>
-//                     {lane}
-//                 </SelectItem>
-//             ))}
-//         </Select>
-//     )
-// }
-
-// export default SelectLanes
-
 import { Checkbox, Avatar, CheckboxGroup, Tooltip } from '@nextui-org/react'
 import { laneIcon } from '@/utils'
 
@@ -32,7 +5,7 @@ const SelectLanes = ({ selectLanes, onChangeValue, value }) => {
     const lanesArray = Object.keys(selectLanes || {})
 
     return (
-        <div className="flex flex-row inline-block">
+        <div className="flex flex-row">
             <CheckboxGroup
                 aria-label="Select Lane"
                 defaultValue={''}
@@ -44,7 +17,6 @@ const SelectLanes = ({ selectLanes, onChangeValue, value }) => {
                     <Checkbox
                         key={lane}
                         value={lane}
-                        size="lg"
                         className="gap-0 p-0"
                         classNames={{
                             base: 'm-0',
