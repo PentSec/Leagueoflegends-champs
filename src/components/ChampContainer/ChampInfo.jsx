@@ -1,10 +1,25 @@
-import { Modal, ModalBody, ModalContent, ModalFooter, Spinner } from '@nextui-org/react'
+import { Avatar, Modal, ModalBody, ModalContent, ModalFooter, Spinner } from '@nextui-org/react'
 import ImageGallery from 'react-image-gallery'
-import { buildPositionIndex, getChampionLanes } from '@/utils'
+import { buildPositionIndex, getChampionLanes, laneIcon } from '@/utils'
 import { useMemo, useEffect, useState } from 'react'
 
-function ChampInfo({ selectedChamp = {}, isLoadingChamp, onClose, lanesRates }) {
+function ChampInfo({
+    selectedChamp = {},
+    selectedCompareChamp = {},
+    isLoadingChamp,
+    onClose,
+    lanesRates
+}) {
     const c = selectedChamp
+    const cc = selectedCompareChamp
+
+    console.log('champ', c)
+    console.log('champ compare', cc)
+
+    if (!cc) {
+        return <div>Loading champion data...</div>
+    }
+
     if (!c) {
         return <div>Loading champion data...</div>
     }
@@ -14,6 +29,7 @@ function ChampInfo({ selectedChamp = {}, isLoadingChamp, onClose, lanesRates }) 
     }, [lanesRates])
 
     const lanes = getChampionLanes(c.key, positionIndex)
+    console.log('champ', c)
 
     const voiceChamp = useMemo(() => {
         if (!c?.voice) return null
@@ -96,23 +112,134 @@ function ChampInfo({ selectedChamp = {}, isLoadingChamp, onClose, lanesRates }) 
                                     </span>
 
                                     <div className="grid grid-cols-3 gap-4 mt-2 font-spiegel text-default-foreground">
-                                        <p>{c.lore}</p>
+                                        <p>{`${c.lore.split(' ').slice(0, 70).join(' ')}${
+                                            c.lore.split(' ').length > 70 ? '...' : ''
+                                        }`}</p>
                                     </div>
+                                    <h2 className="font-semibold text-gray-200">Position</h2>
+                                    <ul>
+                                        {lanes.length > 0 ? (
+                                            lanes.map(({ lane, rate }) => (
+                                                <li key={lane}>
+                                                    <div className="flex items-center justify-between mt-2">
+                                                        <div className="flex items-center gap-2">
+                                                            <Avatar
+                                                                src={laneIcon[lane]}
+                                                                alt={lane}
+                                                                className="flex-shrink-0 w-6 h-6 bg-transparent text-tiny"
+                                                            />
+
+                                                            <span className="flex flex-col text-tiny">
+                                                                {' '}
+                                                                Pick Rate {(rate * 100).toFixed(2)}%
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            ))
+                                        ) : (
+                                            <p>Dont have date for this champion</p>
+                                        )}
+                                    </ul>
                                 </div>
                             </section>
-                            <section className="flex flex-col items-start justify-start w-full p-4">
-                                <h2 className="text-2xl font-bold text-white">Lane</h2>
-                                <ul className="mt-2 text-lg text-gray-300">
-                                    {lanes.length > 0 ? (
-                                        lanes.map(({ lane, rate }) => (
-                                            <li key={lane}>
-                                                {lane} {(rate * 100).toFixed(2)}%
-                                            </li>
-                                        ))
-                                    ) : (
-                                        <p>dont have data for this champ.</p>
-                                    )}
-                                </ul>
+                            <section className="flex flex-col items-center justify-center w-full p-4">
+                                <h1 className="mb-4 text-2xl font-bold">
+                                    Champion Abilities Comparison
+                                </h1>
+                                <div className="flex flex-col gap-4">
+                                    {c.spells?.map((spell, index) => {
+                                        const compareSpell = cc.spells?.[index]
+
+                                        return (
+                                            <div
+                                                key={spell.id}
+                                                className="flex flex-col items-start gap-4 p-4 bg-gray-800 border border-gray-700 rounded-lg"
+                                            >
+                                                {/* Nombre e imagen de la habilidad del primer campeón */}
+                                                <div className="flex items-start gap-6">
+                                                    <div className="flex flex-col items-center">
+                                                        <img
+                                                            src={`https://ddragon.leagueoflegends.com/cdn/14.22.1/img/spell/${spell.image.full}`}
+                                                            alt={spell.name}
+                                                            className="w-12 h-12"
+                                                        />
+                                                        <h2 className="text-xl font-bold text-teal-400">
+                                                            {spell.name}
+                                                        </h2>
+                                                    </div>
+
+                                                    {/* Comparación de habilidades */}
+                                                    <div className="flex flex-col gap-2 text-gray-300">
+                                                        {/* Descripción */}
+                                                        <p>
+                                                            <strong>Description:</strong>{' '}
+                                                            {spell.description}
+                                                            {compareSpell &&
+                                                                spell.description !==
+                                                                    compareSpell.description && (
+                                                                    <span className="ml-2 text-red-400">
+                                                                        (Changes:{'=>'}"
+                                                                        {spell.description}
+                                                                        ")
+                                                                    </span>
+                                                                )}
+                                                        </p>
+                                                        {/* Enfriamiento */}
+                                                        <p>
+                                                            <strong>Cooldown:</strong>{' '}
+                                                            {spell.cooldownBurn}
+                                                            {compareSpell &&
+                                                                spell.cooldownBurn !==
+                                                                    compareSpell.cooldownBurn && (
+                                                                    <span className="ml-2 text-red-400">
+                                                                        (Changes: {'=>'}{' '}
+                                                                        {spell.cooldownBurn})
+                                                                    </span>
+                                                                )}
+                                                        </p>
+                                                        {/* Costos */}
+                                                        <p>
+                                                            <strong>Cost:</strong> {spell.costBurn}{' '}
+                                                            {spell.costType}
+                                                            {compareSpell &&
+                                                                spell.costBurn !==
+                                                                    compareSpell.costBurn && (
+                                                                    <span className="ml-2 text-red-400">
+                                                                        (Changes: {'=>'}{' '}
+                                                                        {spell.costBurn}{' '}
+                                                                        {spell.costType})
+                                                                    </span>
+                                                                )}
+                                                        </p>
+                                                        {/* Rango */}
+                                                        <p>
+                                                            <strong>Range:</strong>{' '}
+                                                            {spell.rangeBurn}
+                                                            {compareSpell &&
+                                                                spell.rangeBurn !==
+                                                                    compareSpell.rangeBurn && (
+                                                                    <span className="ml-2 text-red-400">
+                                                                        (Changes: {'=>'}{' '}
+                                                                        {spell.rangeBurn})
+                                                                    </span>
+                                                                )}
+                                                        </p>
+                                                    </div>
+
+                                                    {/* Nombre e imagen de la habilidad del segundo campeón
+                                                    {compareSpell && (
+                                                        <div className="flex flex-col items-center">
+                                                            <h2 className="text-xl font-bold text-teal-400">
+                                                                {compareSpell.name}
+                                                            </h2>
+                                                        </div>
+                                                    )} */}
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
                             </section>
                         </ModalBody>
                     )

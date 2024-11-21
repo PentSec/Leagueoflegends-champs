@@ -15,6 +15,7 @@ function TooltipComp({ selectedChamp, lanesRates, children }) {
         <Tooltip
             placement="left-start"
             closeDelay={0}
+            offset={25}
             content={
                 <div className="max-w-[300px] p-3 text-white rounded-md shadow-lg">
                     <div className="flex items-center gap-3 mb-3">
@@ -97,7 +98,7 @@ function TooltipComp({ selectedChamp, lanesRates, children }) {
                                                     <Avatar
                                                         src={laneIcon[lane]}
                                                         alt={lane}
-                                                        className="flex-shrink-0 w-6 h-6 text-tiny"
+                                                        className="flex-shrink-0 w-6 h-6 bg-transparent text-tiny"
                                                     />
 
                                                     <span className="flex flex-col text-tiny">
@@ -108,7 +109,7 @@ function TooltipComp({ selectedChamp, lanesRates, children }) {
                                             </div>
                                         </li>
                                     ))
-) : (
+                                ) : (
                                     <p>Dont have date for this champion</p>
                                 )}
                             </ul>
