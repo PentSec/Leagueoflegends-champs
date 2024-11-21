@@ -14,6 +14,7 @@ function useGetChamps(language, version) {
     const [error, setError] = useState(null)
     const [selectedChamp, setSelectedChamp] = useState(null)
     const [isLoadingChamp, setIsLoadingChamp] = useState(false)
+    const [selectedCompareChamp, setSelectedCompareChamp] = useState(null)
 
     useEffect(() => {
         if (!version || !language) {
@@ -48,24 +49,27 @@ function useGetChamps(language, version) {
 
     const cache = useRef({})
 
-    const fetchChampDetails = async (champId) => {
-        if (!version || !language) {
+    const fetchChampDetails = async (champId, champVersion = version) => {
+        if (!champVersion || !language) {
             const errors = []
-            if (!version) errors.push('🤬 Error: No version selected.')
+            if (!champVersion) errors.push('🤬 Error: No version selected.')
             if (!language) errors.push('🤬 Error: No language selected.')
-
             errors.forEach((error) => toast(error))
             return
         }
 
-        const cacheKey = `${champId}-${language}-${version}`
+        const cacheKey = `${champId}-${language}-${champVersion}`
 
         if (cache.current[cacheKey]) {
-            setSelectedChamp(cache.current[cacheKey])
+            if (champVersion === version) {
+                setSelectedChamp(cache.current[cacheKey])
+            } else {
+                setSelectedCompareChamp(cache.current[cacheKey])
+            }
             return
         }
 
-        const champUrl = `https://ddragon.leagueoflegends.com/cdn/${version}/data/${language}/champion/${champId}.json`
+        const champUrl = `https://ddragon.leagueoflegends.com/cdn/${champVersion}/data/${language}/champion/${champId}.json`
         try {
             setIsLoadingChamp(true)
             const response = await fetch(champUrl)
@@ -80,7 +84,12 @@ function useGetChamps(language, version) {
             }
 
             cache.current[cacheKey] = detailedChamp
-            setSelectedChamp(detailedChamp)
+
+            if (champVersion === version) {
+                setSelectedChamp(detailedChamp)
+            } else {
+                setSelectedCompareChamp(detailedChamp)
+            }
         } catch (error) {
             console.error('Error fetching champion details:', error)
         } finally {
@@ -88,7 +97,15 @@ function useGetChamps(language, version) {
         }
     }
 
-    return { champs, isLoading, error, selectedChamp, isLoadingChamp, fetchChampDetails }
+    return {
+        champs,
+        isLoading,
+        error,
+        selectedChamp,
+        isLoadingChamp,
+        fetchChampDetails,
+        selectedCompareChamp
+    }
 }
 
 function mapChamps(champsData, language) {

@@ -9,7 +9,8 @@ import {
     SelectVersion,
     SelectLang,
     FilterRoleChamp,
-    SelectLanes
+    SelectLanes,
+    SelectVersionCompare
 } from '@/components'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useEffect } from 'react'
@@ -35,15 +36,28 @@ function ChampContainer() {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [language, setLanguage] = useState('en_US')
     const [version, setVersion] = useState('14.22.1')
+    const [versionCompare, setVersionCompare] = useState('14.22.1')
     const [selectedRole, setSelectedRole] = useState('')
     const [selectedLane, setSelectedLane] = useState('')
 
     //const by hooks
-    const { lanesRates, loadingLane } = useGetLanesRates()
+    const { lanesRates, loadingLane, preferredPositions } = useGetLanesRates()
     const { versions, isLoadingVersion, errorVersion } = useGetVersion()
     const { languages, isLoadingLang, errorLang } = useGetLang()
-    const { champs, isLoading, error, selectedChamp, isLoadingChamp, fetchChampDetails } =
-        useGetChamps(language, version)
+    const {
+        champs,
+        isLoading,
+        error,
+        selectedChamp,
+        selectedCompareChamp,
+        isLoadingChamp,
+        fetchChampDetails
+    } = useGetChamps(language, version)
+
+    if (preferredPositions) {
+        const preferredPosition = preferredPositions['1'] // ID del campeón
+        console.log('Preferred Position for Champion 1:', preferredPosition)
+    }
 
     const roleChamps = useMemo(() => {
         if (!champs || champs.length === 0) return []
@@ -51,10 +65,10 @@ function ChampContainer() {
         return Array.from(new Set(allRoles))
     }, [champs])
 
-    console.log(`lanes`, lanesRates)
-
+    // console.log(`lanes`, lanesRates)
     const openModal = (champId) => {
         fetchChampDetails(champId)
+        fetchChampDetails(champId, versionCompare)
         setIsModalOpen(true)
     }
 
@@ -108,7 +122,7 @@ function ChampContainer() {
                 <div className="flex items-center justify-center h-screen">
                     <Spinner label="Loading lanes rates..." />
                 </div>
-                 ) : !lanesRates ? (
+            ) : !lanesRates ? (
                 <div>Error to get lanes</div>
             ) : (
                 <>
@@ -128,8 +142,13 @@ function ChampContainer() {
                             isLoadingVer={isLoadingVersion}
                             isErrorVer={errorVersion}
                         />
-                      <Card radius="sm">
-                            <CardBody className="flex flex-col items-center justify-center lg:flex-row text-small h-[47px] gap-1">
+                        <SelectVersionCompare
+                            value={versionCompare}
+                            setVersionCompare={setVersionCompare}
+                            currentVersions={versions}
+                        />
+                        <Card radius="sm">
+                            <CardBody className="flex flex-col items-center justify-center lg:flex-row text-small h-[47px] gap-1 overflow-hidden">
                                 <FilterRoleChamp
                                     value={roleChamps || []}
                                     initialKey={selectedRole}
@@ -197,6 +216,7 @@ function ChampContainer() {
                         <ChampInfo
                             lanesRates={lanesRates}
                             selectedChamp={selectedChamp}
+                            selectedCompareChamp={selectedCompareChamp}
                             isLoadingChamp={isLoadingChamp}
                             onClose={closeModal}
                         />
