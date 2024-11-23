@@ -35,8 +35,8 @@ function ChampContainer() {
     const [searchChamps, setSearchChamps] = useState('')
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [language, setLanguage] = useState('en_US')
-    const [version, setVersion] = useState('14.22.1')
-    const [versionCompare, setVersionCompare] = useState('14.22.1')
+    const [version, setVersion] = useState('')
+    const [versionCompare, setVersionCompare] = useState('')
     const [selectedRole, setSelectedRole] = useState('')
     const [selectedLane, setSelectedLane] = useState('')
 
@@ -51,11 +51,12 @@ function ChampContainer() {
         selectedChamp,
         selectedCompareChamp,
         isLoadingChamp,
-        fetchChampDetails
+        fetchChampDetails,
+        setSelectedCompareChamp
     } = useGetChamps(language, version)
 
     if (preferredPositions) {
-        const preferredPosition = preferredPositions['1'] // ID del campeón
+        const preferredPosition = preferredPositions['1']
         console.log('Preferred Position for Champion 1:', preferredPosition)
     }
 
@@ -68,7 +69,13 @@ function ChampContainer() {
     // console.log(`lanes`, lanesRates)
     const openModal = (champId) => {
         fetchChampDetails(champId)
-        fetchChampDetails(champId, versionCompare)
+
+        if (versionCompare && versionCompare !== version) {
+            fetchChampDetails(champId, versionCompare)
+        } else {
+            setSelectedCompareChamp(null)
+        }
+
         setIsModalOpen(true)
     }
 
@@ -115,6 +122,15 @@ function ChampContainer() {
         hoverSound.load()
         clickSound.load()
     }, [hoverSound, clickSound])
+
+    useEffect(() => {
+        const storedVersion = localStorage.getItem('selectedVersion')
+        if (storedVersion) {
+            setVersion(storedVersion)
+        } else if (versions.length > 0) {
+            setVersion(versions[0])
+        }
+    }, [versions])
 
     return (
         <main className="relative w-full">
