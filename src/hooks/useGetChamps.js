@@ -7,6 +7,10 @@ const generateVoiceUrl = (language, champKey) => {
     return `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/${languagePath}/v1/champion-choose-vo/${champKey}.ogg`
 }
 
+const generateAssetsUrl = (champKey) => {
+    return `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champions/${champKey}.json`
+}
+
 function useGetChamps(language, version) {
     const CHAMPS_DATA = `https://ddragon.leagueoflegends.com/cdn/${version}/data/${language}/champion.json`
     const [champs, setChamps] = useState([])
@@ -30,13 +34,14 @@ function useGetChamps(language, version) {
                 setIsLoading(true)
                 const response = await fetch(CHAMPS_DATA)
                 const data = await response.json()
-
+                console.log('Champs data fetched:', data)
                 if (response.status !== 200) {
                     throw new Error('Failed to fetch champion data')
                 }
 
                 const mappedChamps = mapChamps(Object.values(data.data), language)
                 setChamps(mappedChamps)
+                console.log('Champs:', mappedChamps)
             } catch (error) {
                 console.error('Error fetching champion data:', error)
                 setError(error)
@@ -50,6 +55,7 @@ function useGetChamps(language, version) {
     const cache = useRef({})
 
     const fetchChampDetails = async (champId, champVersion = version) => {
+        console.log('Fetching champion details for:', champId, 'Version:', champVersion)
         if (!champVersion || !language) {
             const errors = []
             if (!champVersion) errors.push('🤬 Error: No version selected.')
@@ -62,10 +68,13 @@ function useGetChamps(language, version) {
 
         if (cache.current[cacheKey]) {
             if (champVersion === version) {
+                console.log('Selected Champ:', cache.current[cacheKey])
                 setSelectedChamp(cache.current[cacheKey])
             } else {
+                console.log('Selected Compare Champ:', cache.current[cacheKey])
                 setSelectedCompareChamp(cache.current[cacheKey])
             }
+
             return
         }
 
@@ -74,20 +83,29 @@ function useGetChamps(language, version) {
             setIsLoadingChamp(true)
             const response = await fetch(champUrl)
             const data = await response.json()
+            if (response.status !== 200) {
+                throw new Error('Failed to fetch champion details')
+            }
+            if (response.status === 404) {
+                throw new Error('Champion not found in this version.')
+            }
 
             const baseChamp = champs.find((champ) => champ.id === champId)
 
             const detailedChamp = {
                 ...baseChamp,
                 ...data.data[champId],
-                voice: generateVoiceUrl(language, baseChamp?.key || data.data[champId].key)
+                voice: generateVoiceUrl(language, baseChamp?.key || data.data[champId].key),
+                assets: generateAssetsUrl(baseChamp?.key || data.data[champId].key)
             }
 
             cache.current[cacheKey] = detailedChamp
 
             if (champVersion === version) {
+                console.log('Selected Champ:', detailedChamp)
                 setSelectedChamp(detailedChamp)
             } else {
+                console.log('Selected Compare Champ:', detailedChamp)
                 setSelectedCompareChamp(detailedChamp)
             }
         } catch (error) {
@@ -104,7 +122,8 @@ function useGetChamps(language, version) {
         selectedChamp,
         isLoadingChamp,
         fetchChampDetails,
-        selectedCompareChamp
+        selectedCompareChamp,
+        setSelectedCompareChamp
     }
 }
 

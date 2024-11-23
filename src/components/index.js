@@ -1,7 +1,7 @@
 export { default as ChampContainer } from './ChampContainer/ChampContainer'
 export { default as SearchChamps } from './HeaderApp/SearchChamp'
 export { default as TooltipComp } from './ChampContainer/TooltipComp'
-export { default as ChampInfo } from './ChampContainer/ChampInfo'
+export { default as ChampInfo } from './ChampContainer/ChampInfo/ChampInfo'
 export { default as SelectVersion } from './HeaderApp/SelectVersion'
 export { default as SelectLang } from './HeaderApp/SelectLang'
 export { default as FilterRoleChamp } from './HeaderApp/FilterRoleChamp'
