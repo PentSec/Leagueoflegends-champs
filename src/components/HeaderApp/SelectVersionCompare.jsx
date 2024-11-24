@@ -5,22 +5,9 @@ import { useState, useEffect } from 'react'
 
 const SelectVersionCompare = ({ value, setVersionCompare, currentVersions }) => {
     const [visibleVersions, setVisibleVersions] = useState([])
-    const [itemsToShow, setItemsToShow] = useState(50)
+    const [itemsToShow, setItemsToShow] = useState(10)
     const [isOpen, setIsOpen] = useState(false)
     const [query, setQuery] = useState('')
-
-    useEffect(() => {
-        const storedVersion = localStorage.getItem('selectedVersionCompare')
-        if (storedVersion) {
-            setVersionCompare(storedVersion)
-        }
-    }, [setVersionCompare])
-
-    useEffect(() => {
-        if (value) {
-            localStorage.setItem('selectedVersionCompare', value)
-        }
-    }, [value])
 
     useEffect(() => {
         if (query) {
