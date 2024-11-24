@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 
-// https://vite.dev/config/
 export default defineConfig({
     plugins: [react()],
     base: '/Leagueoflegends-champs/',
@@ -9,5 +8,16 @@ export default defineConfig({
         alias: {
             '@': '/src'
         }
+    },
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    'react-vendors': ['react', 'react-dom'],
+                    'ui-vendors': ['@nextui-org/react', 'react-image-gallery']
+                }
+            }
+        },
+        chunkSizeWarningLimit: 500
     }
 })
