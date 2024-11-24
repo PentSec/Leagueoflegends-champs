@@ -1,7 +1,6 @@
 import { Image, Tooltip } from '@nextui-org/react'
 
-const ChampionAbilities = ({ c, cc }) => {
-    console.log(`cositas`, c, cc)
+const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion }) => {
     return (
         <>
             <h1 className="mb-4 text-2xl font-bold text-default-foreground font-beaufortBold">
@@ -26,10 +25,13 @@ const ChampionAbilities = ({ c, cc }) => {
                                                     c.passive.description !==
                                                         cc.passive.description && (
                                                         <span className="ml-2 text-red-400">
-                                                            (Changes: {'=>'}{' '}
+                                                            ({selectVersionCompare}: {'=>'}{' '}
                                                             {cc.passive.description})
                                                         </span>
                                                     )}
+                                            </p>
+                                            <p className="text-tiny text-slate-400">
+                                                v.{selectVersion}
                                             </p>
                                         </div>
                                     }
@@ -68,8 +70,8 @@ const ChampionAbilities = ({ c, cc }) => {
                                                         spell.description !==
                                                             compareSpell.description && (
                                                             <span className="ml-2 text-red-400">
-                                                                (Changes:
-                                                                {'=>'}"{compareSpell.description}
+                                                                (v.{selectVersionCompare}:{'=>'}"
+                                                                {compareSpell.description}
                                                                 ")
                                                             </span>
                                                         )}
@@ -80,7 +82,7 @@ const ChampionAbilities = ({ c, cc }) => {
                                                         spell.cooldownBurn !==
                                                             compareSpell.cooldownBurn && (
                                                             <span className="ml-2 text-red-400">
-                                                                (Changes: {'=>'}{' '}
+                                                                (v.{selectVersionCompare}: {'=>'}{' '}
                                                                 {compareSpell.cooldownBurn})
                                                             </span>
                                                         )}
@@ -92,7 +94,7 @@ const ChampionAbilities = ({ c, cc }) => {
                                                         spell.costBurn !==
                                                             compareSpell.costBurn && (
                                                             <span className="ml-2 text-red-400">
-                                                                (Changes: {'=>'}{' '}
+                                                                (v.{selectVersionCompare}: {'=>'}{' '}
                                                                 {compareSpell.costBurn}{' '}
                                                                 {compareSpell.costType})
                                                             </span>
@@ -104,10 +106,13 @@ const ChampionAbilities = ({ c, cc }) => {
                                                         spell.rangeBurn !==
                                                             compareSpell.rangeBurn && (
                                                             <span className="ml-2 text-red-400">
-                                                                (Changes: {'=>'}{' '}
+                                                                (v.{selectVersionCompare}: {'=>'}{' '}
                                                                 {compareSpell.rangeBurn})
                                                             </span>
                                                         )}
+                                                </p>
+                                                <p className="text-tiny text-slate-400">
+                                                    v.{selectVersion}
                                                 </p>
                                             </div>
                                         }

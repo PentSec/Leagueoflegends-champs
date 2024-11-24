@@ -34,14 +34,12 @@ function useGetChamps(language, version) {
                 setIsLoading(true)
                 const response = await fetch(CHAMPS_DATA)
                 const data = await response.json()
-                console.log('Champs data fetched:', data)
                 if (response.status !== 200) {
                     throw new Error('Failed to fetch champion data')
                 }
 
-                const mappedChamps = mapChamps(Object.values(data.data), language)
+                const mappedChamps = mapChamps(Object.values(data.data), version)
                 setChamps(mappedChamps)
-                console.log('Champs:', mappedChamps)
             } catch (error) {
                 console.error('Error fetching champion data:', error)
                 setError(error)
@@ -55,7 +53,6 @@ function useGetChamps(language, version) {
     const cache = useRef({})
 
     const fetchChampDetails = async (champId, champVersion = version) => {
-        console.log('Fetching champion details for:', champId, 'Version:', champVersion)
         if (!champVersion || !language) {
             const errors = []
             if (!champVersion) errors.push('🤬 Error: No version selected.')
@@ -68,10 +65,8 @@ function useGetChamps(language, version) {
 
         if (cache.current[cacheKey]) {
             if (champVersion === version) {
-                console.log('Selected Champ:', cache.current[cacheKey])
                 setSelectedChamp(cache.current[cacheKey])
             } else {
-                console.log('Selected Compare Champ:', cache.current[cacheKey])
                 setSelectedCompareChamp(cache.current[cacheKey])
             }
 
@@ -102,10 +97,8 @@ function useGetChamps(language, version) {
             cache.current[cacheKey] = detailedChamp
 
             if (champVersion === version) {
-                console.log('Selected Champ:', detailedChamp)
                 setSelectedChamp(detailedChamp)
             } else {
-                console.log('Selected Compare Champ:', detailedChamp)
                 setSelectedCompareChamp(detailedChamp)
             }
         } catch (error) {
@@ -127,7 +120,7 @@ function useGetChamps(language, version) {
     }
 }
 
-function mapChamps(champsData, language) {
+function mapChamps(champsData, version) {
     return champsData.map((champ) => ({
         id: champ.id,
         name: champ.name,
@@ -174,7 +167,7 @@ function mapChamps(champsData, language) {
             attackspeedperlevel: champ.stats.attackspeedperlevel
         },
         loadingImage: `https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${champ.id}_0.jpg`,
-        avatarImage: `https://ddragon.leagueoflegends.com/cdn/14.22.1/img/champion/${champ.id}.png`
+        avatarImage: `https://ddragon.leagueoflegends.com/cdn/${version}/img/champion/${champ.id}.png`
     }))
 }
 

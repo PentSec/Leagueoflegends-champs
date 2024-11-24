@@ -41,7 +41,7 @@ function ChampContainer() {
     const [selectedLane, setSelectedLane] = useState('')
 
     //const by hooks
-    const { lanesRates, loadingLane, preferredPositions } = useGetLanesRates()
+    const { lanesRates, loadingLane } = useGetLanesRates()
     const { versions, isLoadingVersion, errorVersion } = useGetVersion()
     const { languages, isLoadingLang, errorLang } = useGetLang()
     const {
@@ -55,18 +55,12 @@ function ChampContainer() {
         setSelectedCompareChamp
     } = useGetChamps(language, version)
 
-    if (preferredPositions) {
-        const preferredPosition = preferredPositions['1']
-        console.log('Preferred Position for Champion 1:', preferredPosition)
-    }
-
     const roleChamps = useMemo(() => {
         if (!champs || champs.length === 0) return []
         const allRoles = champs.flatMap((champ) => champ.roles)
         return Array.from(new Set(allRoles))
     }, [champs])
 
-    // console.log(`lanes`, lanesRates)
     const openModal = (champId) => {
         fetchChampDetails(champId)
 
@@ -164,7 +158,7 @@ function ChampContainer() {
                             currentVersions={versions}
                         />
                         <Card radius="sm">
-                            <CardBody className="flex flex-col items-center justify-center lg:flex-row text-small h-[47px] gap-1 overflow-hidden">
+                            <CardBody className="flex flex-col items-center justify-center gap-1 overflow-hidden lg:flex-row text-small">
                                 <FilterRoleChamp
                                     value={roleChamps || []}
                                     initialKey={selectedRole}
@@ -235,6 +229,8 @@ function ChampContainer() {
                             selectedCompareChamp={selectedCompareChamp}
                             isLoadingChamp={isLoadingChamp}
                             onClose={closeModal}
+                            selectVersion={version}
+                            selectVersionCompare={versionCompare}
                         />
                     )}
                 </>

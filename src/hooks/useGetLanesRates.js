@@ -1,13 +1,10 @@
 import { useState, useEffect } from 'react'
-let count
 
 function useGetLanesRates() {
     const [lanesRates, setLanesRates] = useState(null)
     const [loadingLane, setLoadingLane] = useState(true)
 
     useEffect(() => {
-        count = count ? count + 1 : 1
-        console.log('count', count)
         async function fetchData() {
             const url =
                 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-champion-statistics/global/default/rcp-fe-lol-champion-statistics.js'
