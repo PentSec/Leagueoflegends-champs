@@ -37,7 +37,7 @@ const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion }) => {
                                     }
                                 >
                                     <Image
-                                        src={`https://ddragon.leagueoflegends.com/cdn/14.22.1/img/passive/${c.passive.image.full}`}
+                                        src={`https://ddragon.leagueoflegends.com/cdn/${selectVersion}/img/passive/${c.passive.image.full}`}
                                         alt={c.passive.name}
                                         className="w-12 h-12 mb-4"
                                         radius="full"
@@ -118,7 +118,7 @@ const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion }) => {
                                         }
                                     >
                                         <Image
-                                            src={`https://ddragon.leagueoflegends.com/cdn/14.22.1/img/spell/${spell.image.full}`}
+                                            src={`https://ddragon.leagueoflegends.com/cdn/${selectVersion}/img/spell/${spell.image.full}`}
                                             alt={spell.name}
                                             className="w-12 h-12 mb-4"
                                             radius="full"
