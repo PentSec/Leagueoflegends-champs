@@ -1,6 +1,11 @@
 import { Image, Tooltip } from '@nextui-org/react'
 
-const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion }) => {
+const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion, abilityVideos }) => {
+    const abilityVideosMap = abilityVideos.reduce((acc, ability) => {
+        acc[ability.name] = ability.videoUrl
+        return acc
+    }, {})
+
     return (
         <>
             <h1 className="mb-4 text-2xl font-bold text-default-foreground font-beaufortBold">
@@ -33,6 +38,20 @@ const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion }) => {
                                             <p className="text-tiny text-slate-400">
                                                 v.{selectVersion}
                                             </p>
+                                            {abilityVideosMap[c.passive.name] && (
+                                                <video
+                                                    width="100%"
+                                                    className="mt-2 rounded-lg"
+                                                    autoPlay
+                                                    loop
+                                                >
+                                                    <source
+                                                        src={abilityVideosMap[c.passive.name]}
+                                                        type="video/mp4"
+                                                    />
+                                                    Tu navegador no soporta el formato de video.
+                                                </video>
+                                            )}
                                         </div>
                                     }
                                 >
@@ -52,6 +71,7 @@ const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion }) => {
                 )}
                 {c.spells?.map((spell, index) => {
                     const compareSpell = cc?.spells?.[index]
+                    const spellVideoUrl = abilityVideosMap[spell.name]
 
                     return (
                         <div key={spell.id} className="flex flex-col items-start gap-4 p-4">
@@ -114,6 +134,20 @@ const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion }) => {
                                                 <p className="text-tiny text-slate-400">
                                                     v.{selectVersion}
                                                 </p>
+                                                {spellVideoUrl && (
+                                                    <video
+                                                        width="100%"
+                                                        className="mt-2 rounded-lg"
+                                                        autoPlay
+                                                        loop
+                                                    >
+                                                        <source
+                                                            src={spellVideoUrl}
+                                                            type="video/mp4"
+                                                        />
+                                                        Tu navegador no soporta el formato de video.
+                                                    </video>
+                                                )}
                                             </div>
                                         }
                                     >

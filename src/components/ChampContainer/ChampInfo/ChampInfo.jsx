@@ -6,6 +6,8 @@ import getSkinImages from './getSkingImages'
 import ChampionAbilities from './ChampionAbilities'
 import HeaderChampInfo from './HeaderChampInfo'
 
+const VIDEO_BASE_URL = 'https://d28xe8vt774jo5.cloudfront.net/'
+
 function ChampInfo({
     selectedChamp = {},
     selectedCompareChamp = {},
@@ -18,7 +20,6 @@ function ChampInfo({
     if (!selectedChamp) {
         return <main>Loading champion data...</main>
     }
-    console.log('selectedChamp', selectedChamp)
     const [isModalFullyLoaded, setIsModalFullyLoaded] = useState(false)
     const positionIndex = useMemo(() => {
         return lanesRates ? buildPositionIndex(lanesRates) : {}
@@ -52,6 +53,17 @@ function ChampInfo({
             return () => clearTimeout(timeout)
         }
     }, [isLoadingChamp])
+
+    const abilityVideos = [
+        {
+            name: selectedChamp.assets.passive.name,
+            videoUrl: `${VIDEO_BASE_URL}${selectedChamp.assets.passive.abilityVideoPath}`
+        },
+        ...selectedChamp.assets.spells?.map((spell) => ({
+            name: spell.name,
+            videoUrl: `${VIDEO_BASE_URL}${spell.abilityVideoPath}`
+        }))
+    ]
 
     return (
         <Modal
@@ -91,6 +103,7 @@ function ChampInfo({
                                 <ChampionAbilities
                                     c={selectedChamp}
                                     cc={selectedCompareChamp}
+                                    abilityVideos={abilityVideos}
                                     lanesValue={lanes}
                                     selectVersion={selectVersion}
                                     selectVersionCompare={selectVersionCompare}
