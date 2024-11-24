@@ -11,7 +11,9 @@ function ChampInfo({
     selectedCompareChamp = {},
     isLoadingChamp,
     onClose,
-    lanesRates
+    lanesRates,
+    selectVersion,
+    selectVersionCompare
 }) {
     if (!selectedChamp) {
         return <div>Loading champion data...</div>
@@ -78,11 +80,19 @@ function ChampInfo({
                                     lanesValue={lanes}
                                 />
                             </section>
+                            <section>
+                                <div className="flex flex-col items-center justify-center w-full p-4">
+                                    Current Ver:{selectVersion} to compare with ver:
+                                    {selectVersionCompare || 'None to compare'}
+                                </div>
+                            </section>
                             <section className="flex flex-col items-center justify-center w-full p-4">
                                 <ChampionAbilities
                                     c={selectedChamp}
                                     cc={selectedCompareChamp}
                                     lanesValue={lanes}
+                                    selectVersion={selectVersion}
+                                    selectVersionCompare={selectVersionCompare}
                                 />
                             </section>
                         </ModalBody>
