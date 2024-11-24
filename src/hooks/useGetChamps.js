@@ -7,8 +7,9 @@ const generateVoiceUrl = (language, champKey) => {
     return `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/${languagePath}/v1/champion-choose-vo/${champKey}.ogg`
 }
 
-const generateAssetsUrl = (champKey) => {
-    return `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champions/${champKey}.json`
+const generateAssetsUrl = (language, champKey) => {
+    const languagePath = language === 'en_US' ? 'default' : language.toLowerCase()
+    return `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/${languagePath}/v1/champions/${champKey}.json`
 }
 
 function useGetChamps(language, version) {
@@ -91,7 +92,9 @@ function useGetChamps(language, version) {
                 ...baseChamp,
                 ...data.data[champId],
                 voice: generateVoiceUrl(language, baseChamp?.key || data.data[champId].key),
-                assets: generateAssetsUrl(baseChamp?.key || data.data[champId].key)
+                assets: await fetchChampAssets(
+                    generateAssetsUrl(language, baseChamp?.key || data.data[champId].key)
+                )
             }
 
             cache.current[cacheKey] = detailedChamp
@@ -105,6 +108,21 @@ function useGetChamps(language, version) {
             console.error('Error fetching champion details:', error)
         } finally {
             setIsLoadingChamp(false)
+        }
+    }
+
+    const fetchChampAssets = async (assetsUrl) => {
+        try {
+            const response = await fetch(assetsUrl)
+            const assetsData = await response.json()
+            if (!response.ok) {
+                throw new Error('Failed to fetch champion assets')
+            }
+
+            return mapAssets(assetsData)
+        } catch (error) {
+            console.error('Error fetching champion assets:', error)
+            return null
         }
     }
 
@@ -169,6 +187,29 @@ function mapChamps(champsData, version) {
         loadingImage: `https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${champ.id}_0.jpg`,
         avatarImage: `https://ddragon.leagueoflegends.com/cdn/${version}/img/champion/${champ.id}.png`
     }))
+}
+
+function mapAssets(asset) {
+    return {
+        id: asset.id,
+        name: asset.name,
+        alias: asset.alias,
+        banVoPath: asset.banVoPath,
+        chooseVoPath: asset.chooseVoPath,
+        passive: asset.passive
+            ? {
+                  name: asset.passive.name,
+                  abilityVideoPath: asset.passive.abilityVideoPath
+              }
+            : null,
+        spells: asset.spells
+            ? asset.spells.map((spell) => ({
+                  spellKey: spell.spellKey,
+                  name: spell.name,
+                  abilityVideoPath: spell.abilityVideoPath
+              }))
+            : []
+    }
 }
 
 export default useGetChamps

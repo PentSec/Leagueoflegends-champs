@@ -4,7 +4,7 @@ import { useInfiniteScroll } from '@nextui-org/use-infinite-scroll'
 
 function SelectVersion({ versions, setVersion, value, isLoadingVer, isErrorVer }) {
     const [visibleVersions, setVisibleVersions] = useState([])
-    const [itemsToShow, setItemsToShow] = useState(50)
+    const [itemsToShow, setItemsToShow] = useState(10)
     const [isOpen, setIsOpen] = useState(false)
     const [query, setQuery] = useState('')
 

@@ -1,4 +1,4 @@
-import { Modal, ModalBody, ModalContent, ModalFooter, Spinner } from '@nextui-org/react'
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, Spinner } from '@nextui-org/react'
 import { buildPositionIndex, getChampionLanes } from '@/utils'
 import { useMemo, useEffect, useState } from 'react'
 import useChampionVoice from './useChampionVoice'
@@ -16,8 +16,9 @@ function ChampInfo({
     selectVersionCompare
 }) {
     if (!selectedChamp) {
-        return <div>Loading champion data...</div>
+        return <main>Loading champion data...</main>
     }
+    console.log('selectedChamp', selectedChamp)
     const [isModalFullyLoaded, setIsModalFullyLoaded] = useState(false)
     const positionIndex = useMemo(() => {
         return lanesRates ? buildPositionIndex(lanesRates) : {}
@@ -98,7 +99,11 @@ function ChampInfo({
                         </ModalBody>
                     )
                 )}
-                <ModalFooter></ModalFooter>
+                <ModalFooter>
+                    <Button size="sm" color="primary" onClick={onClose}>
+                        Close
+                    </Button>
+                </ModalFooter>
             </ModalContent>
         </Modal>
     )
