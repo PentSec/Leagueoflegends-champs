@@ -1,7 +1,23 @@
 import { Image, Tooltip } from '@nextui-org/react'
+const VIDEO_BASE_URL = 'https://d28xe8vt774jo5.cloudfront.net/'
+const replaceDynamicDescriptionVariables = (description) => {
+    return description
+        .replace(/@(\w+)\*-?\d+@%?/g, '?%')
+        .replace(/@(\w+)@/g, '?') // Reemplaza contenido entre @...@ con '?'
+        .replace(/<[^>]+>/g, '') // Elimina contenido entre <> incluyendo los símbolos <>
+}
 
-const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion, abilityVideos }) => {
-    const abilityVideosMap = abilityVideos.reduce((acc, ability) => {
+const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion }) => {
+    const abilityVideosMap = [
+        {
+            name: c.assets.passive.name,
+            videoUrl: `${VIDEO_BASE_URL}${c.assets.passive.abilityVideoPath}`
+        },
+        ...c.assets.spells?.map((spell) => ({
+            name: spell.name,
+            videoUrl: `${VIDEO_BASE_URL}${spell.abilityVideoPath}`
+        }))
+    ].reduce((acc, ability) => {
         acc[ability.name] = ability.videoUrl
         return acc
     }, {})
@@ -18,7 +34,7 @@ const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion, ability
                             <div className="flex flex-col items-center">
                                 <Tooltip
                                     content={
-                                        <div className="flex flex-col gap-2 text-gray-300 max-w-[400px]">
+                                        <div className="flex flex-col gap-2 text-gray-300 max-w-[400px] text-tiny">
                                             <h2 className="text-xl font-bold text-center text-teal-400 font-spiegel">
                                                 {c.passive.name}
                                             </h2>
@@ -47,9 +63,9 @@ const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion, ability
                                                 >
                                                     <source
                                                         src={abilityVideosMap[c.passive.name]}
-                                                        type="video/mp4"
+                                                        type="video/webm"
                                                     />
-                                                    Tu navegador no soporta el formato de video.
+                                                    Your browser does not support the video tag.
                                                 </video>
                                             )}
                                         </div>
@@ -72,17 +88,69 @@ const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion, ability
                 {c.spells?.map((spell, index) => {
                     const compareSpell = cc?.spells?.[index]
                     const spellVideoUrl = abilityVideosMap[spell.name]
+                    const dynamicDescription = c.assets.spells?.[index]?.dynamicDescription
+                    const compareDynamicDescription =
+                        cc?.assets?.spells?.[index]?.dynamicDescription
+                    const replacedDynamicDescription = dynamicDescription
+                        ? replaceDynamicDescriptionVariables(dynamicDescription)
+                        : ''
+                    const replacedCompareDynamicDescription = compareDynamicDescription
+                        ? replaceDynamicDescriptionVariables(compareDynamicDescription)
+                        : ''
 
                     return (
-                        <div key={spell.id} className="flex flex-col items-start gap-4 p-4">
+                        <div
+                            key={spell.id}
+                            className="flex flex-col items-start gap-4 p-4 transition duration-300 ease-in-out hover:-translate-y-1 hover:scale-110"
+                        >
                             <div className="flex items-start gap-6">
                                 <div className="flex flex-col items-center">
                                     <Tooltip
                                         content={
-                                            <div className=" max-w-[400px] flex flex-col gap-2 text-gray-300">
+                                            <div className=" max-w-[400px] flex flex-col gap-2 text-gray-300 text-tiny">
                                                 <h2 className="text-xl font-bold text-teal-400">
                                                     {spell.name}
                                                 </h2>
+                                                <div>
+                                                    <p className="text-red-700">
+                                                        <strong>Cooldown:</strong>{' '}
+                                                        {spell.cooldownBurn}
+                                                        {compareSpell &&
+                                                            spell.cooldownBurn !==
+                                                                compareSpell.cooldownBurn && (
+                                                                <span className="ml-2 text-red-400">
+                                                                    (v.{selectVersionCompare}:{' '}
+                                                                    {'=>'}{' '}
+                                                                    {compareSpell.cooldownBurn})
+                                                                </span>
+                                                            )}
+                                                    </p>
+                                                    <p>
+                                                        <strong>Cost:</strong> {spell.costBurn}{' '}
+                                                        {spell.costType}
+                                                        {compareSpell &&
+                                                            spell.costBurn !==
+                                                                compareSpell.costBurn && (
+                                                                <span className="ml-2 text-red-400">
+                                                                    (v.{selectVersionCompare}:{' '}
+                                                                    {'=>'} {compareSpell.costBurn}{' '}
+                                                                    {compareSpell.costType})
+                                                                </span>
+                                                            )}
+                                                    </p>
+                                                    <p>
+                                                        <strong>Range:</strong> {spell.rangeBurn}
+                                                        {compareSpell &&
+                                                            spell.rangeBurn !==
+                                                                compareSpell.rangeBurn && (
+                                                                <span className="ml-2 text-red-400">
+                                                                    (v.{selectVersionCompare}:{' '}
+                                                                    {'=>'} {compareSpell.rangeBurn})
+                                                                </span>
+                                                            )}
+                                                    </p>
+                                                </div>
+
                                                 <p>
                                                     <strong>Description:</strong>{' '}
                                                     {spell.description}
@@ -96,41 +164,25 @@ const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion, ability
                                                             </span>
                                                         )}
                                                 </p>
-                                                <p>
-                                                    <strong>Cooldown:</strong> {spell.cooldownBurn}
-                                                    {compareSpell &&
-                                                        spell.cooldownBurn !==
-                                                            compareSpell.cooldownBurn && (
-                                                            <span className="ml-2 text-red-400">
-                                                                (v.{selectVersionCompare}: {'=>'}{' '}
-                                                                {compareSpell.cooldownBurn})
-                                                            </span>
-                                                        )}
-                                                </p>
-                                                <p>
-                                                    <strong>Cost:</strong> {spell.costBurn}{' '}
-                                                    {spell.costType}
-                                                    {compareSpell &&
-                                                        spell.costBurn !==
-                                                            compareSpell.costBurn && (
-                                                            <span className="ml-2 text-red-400">
-                                                                (v.{selectVersionCompare}: {'=>'}{' '}
-                                                                {compareSpell.costBurn}{' '}
-                                                                {compareSpell.costType})
-                                                            </span>
-                                                        )}
-                                                </p>
-                                                <p>
-                                                    <strong>Range:</strong> {spell.rangeBurn}
-                                                    {compareSpell &&
-                                                        spell.rangeBurn !==
-                                                            compareSpell.rangeBurn && (
-                                                            <span className="ml-2 text-red-400">
-                                                                (v.{selectVersionCompare}: {'=>'}{' '}
-                                                                {compareSpell.rangeBurn})
-                                                            </span>
-                                                        )}
-                                                </p>
+                                                {replacedDynamicDescription && (
+                                                    <p className="text-tiny text-warning">
+                                                        <strong>Dynamic Description:</strong>{' '}
+                                                        {replacedDynamicDescription}
+                                                        {replacedCompareDynamicDescription &&
+                                                            replacedDynamicDescription !==
+                                                                replacedCompareDynamicDescription && (
+                                                                <span className="ml-2 text-red-400">
+                                                                    (v.{selectVersionCompare}:{' '}
+                                                                    {'=>'}{' '}
+                                                                    {
+                                                                        replacedCompareDynamicDescription
+                                                                    }
+                                                                    )
+                                                                </span>
+                                                            )}
+                                                    </p>
+                                                )}
+
                                                 <p className="text-tiny text-slate-400">
                                                     v.{selectVersion}
                                                 </p>
@@ -143,9 +195,9 @@ const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion, ability
                                                     >
                                                         <source
                                                             src={spellVideoUrl}
-                                                            type="video/mp4"
+                                                            type="video/webm"
                                                         />
-                                                        Tu navegador no soporta el formato de video.
+                                                        Your browser does not support the video tag.
                                                     </video>
                                                 )}
                                             </div>
@@ -158,8 +210,8 @@ const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion, ability
                                             radius="full"
                                         />
                                     </Tooltip>
-                                    <h1 className="text-xl font-bold text-teal-400 font-spiegel">
-                                        {spell.name}
+                                    <h1 className="text-xl font-bold text-center text-teal-400 font-spiegel">
+                                        {spell.name} asd
                                     </h1>
                                 </div>
                             </div>

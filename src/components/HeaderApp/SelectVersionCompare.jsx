@@ -17,6 +17,7 @@ const SelectVersionCompare = ({ value, setVersionCompare, currentVersions }) => 
                 )
             )
         } else {
+            setItemsToShow(10)
             setVisibleVersions(currentVersions.slice(0, itemsToShow))
         }
     }, [currentVersions, itemsToShow, query])
@@ -39,6 +40,8 @@ const SelectVersionCompare = ({ value, setVersionCompare, currentVersions }) => 
     return (
         <Autocomplete
             label="Version"
+            onInputChange={(text) => setQuery(text)}
+            defaultItems={visibleVersions}
             scrollRef={scrollerRef}
             onOpenChange={setIsOpen}
             selectedKey={value}
