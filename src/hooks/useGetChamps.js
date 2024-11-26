@@ -7,9 +7,32 @@ const generateVoiceUrl = (language, champKey) => {
     return `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/${languagePath}/v1/champion-choose-vo/${champKey}.ogg`
 }
 
-const generateAssetsUrl = (language, champKey) => {
+const parseVersion = (version) => {
+    if (!version) {
+        console.warn(
+            'parseVersion: La versión está indefinida o es nula. Se requiere una versión válida.'
+        )
+        return 'latest'
+    }
+    const versionParts = version.split('.')
+    if (versionParts.length >= 2) {
+        return `${versionParts[0]}.${versionParts[1]}`
+    }
+    console.warn(
+        'parseVersion: La versión no tiene el formato esperado (X.Y.Z). Usando valor predeterminado.'
+    )
+    return version
+}
+
+const generateAssetsUrl = (language, champKey, version) => {
     const languagePath = language === 'en_US' ? 'default' : language.toLowerCase()
-    return `https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/${languagePath}/v1/champions/${champKey}.json`
+    const parsedVersion = parseVersion(version)
+    return `https://raw.communitydragon.org/${parsedVersion}/plugins/rcp-be-lol-game-data/global/${languagePath}/v1/champions/${champKey}.json`
+}
+
+const spellCalculation = (chamName) => {
+    const champName = chamName.toLowerCase()
+    return `https://raw.communitydragon.org/latest/game/data/characters/${champName}/${champName}.bin.json`
 }
 
 function useGetChamps(language, version) {
@@ -82,7 +105,13 @@ function useGetChamps(language, version) {
             if (response.status !== 200) {
                 throw new Error('Failed to fetch champion details')
             }
+            if (response.status === 403) {
+                setSelectedCompareChamp(null)
+                toast.error(`Champion not available in version ${champVersion}.`)
+                return
+            }
             if (response.status === 404) {
+                setSelectedCompareChamp(null)
                 throw new Error('Champion not found in this version.')
             }
 
@@ -93,8 +122,13 @@ function useGetChamps(language, version) {
                 ...data.data[champId],
                 voice: generateVoiceUrl(language, baseChamp?.key || data.data[champId].key),
                 assets: await fetchChampAssets(
-                    generateAssetsUrl(language, baseChamp?.key || data.data[champId].key)
-                )
+                    generateAssetsUrl(
+                        language,
+                        baseChamp?.key || data.data[champId].key,
+                        champVersion
+                    )
+                ),
+                spellCalc: await fetchSpellCalculation(spellCalculation(data.data[champId].name))
             }
 
             cache.current[cacheKey] = detailedChamp
@@ -106,6 +140,7 @@ function useGetChamps(language, version) {
             }
         } catch (error) {
             console.error('Error fetching champion details:', error)
+            setSelectedCompareChamp(null)
         } finally {
             setIsLoadingChamp(false)
         }
@@ -122,6 +157,21 @@ function useGetChamps(language, version) {
             return mapAssets(assetsData)
         } catch (error) {
             console.error('Error fetching champion assets:', error)
+            return null
+        }
+    }
+
+    const fetchSpellCalculation = async (spellCalcUrl) => {
+        try {
+            const response = await fetch(spellCalcUrl)
+            const spellCalcData = await response.json()
+            if (!response.ok) {
+                throw new Error('Failed to fetch spell calculation')
+            }
+
+            return spellCalcData
+        } catch (error) {
+            console.error('Error fetching spell calculation:', error)
             return null
         }
     }
@@ -188,6 +238,7 @@ function mapChamps(champsData, version) {
         avatarImage: `https://ddragon.leagueoflegends.com/cdn/${version}/img/champion/${champ.id}.png`
     }))
 }
+1
 
 function mapAssets(asset) {
     return {
@@ -199,14 +250,16 @@ function mapAssets(asset) {
         passive: asset.passive
             ? {
                   name: asset.passive.name,
-                  abilityVideoPath: asset.passive.abilityVideoPath
+                  abilityVideoPath: asset.passive.abilityVideoPath,
+                  dynamicDescription: asset.passive.dynamicDescription
               }
             : null,
         spells: asset.spells
             ? asset.spells.map((spell) => ({
                   spellKey: spell.spellKey,
                   name: spell.name,
-                  abilityVideoPath: spell.abilityVideoPath
+                  abilityVideoPath: spell.abilityVideoPath,
+                  dynamicDescription: spell.dynamicDescription
               }))
             : []
     }

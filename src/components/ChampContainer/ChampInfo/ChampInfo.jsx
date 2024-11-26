@@ -6,8 +6,6 @@ import getSkinImages from './getSkingImages'
 import ChampionAbilities from './ChampionAbilities'
 import HeaderChampInfo from './HeaderChampInfo'
 
-const VIDEO_BASE_URL = 'https://d28xe8vt774jo5.cloudfront.net/'
-
 function ChampInfo({
     selectedChamp = {},
     selectedCompareChamp = {},
@@ -54,17 +52,6 @@ function ChampInfo({
         }
     }, [isLoadingChamp])
 
-    const abilityVideos = [
-        {
-            name: selectedChamp.assets.passive.name,
-            videoUrl: `${VIDEO_BASE_URL}${selectedChamp.assets.passive.abilityVideoPath}`
-        },
-        ...selectedChamp.assets.spells?.map((spell) => ({
-            name: spell.name,
-            videoUrl: `${VIDEO_BASE_URL}${spell.abilityVideoPath}`
-        }))
-    ]
-
     return (
         <Modal
             scrollBehavior="inside"
@@ -103,7 +90,6 @@ function ChampInfo({
                                 <ChampionAbilities
                                     c={selectedChamp}
                                     cc={selectedCompareChamp}
-                                    abilityVideos={abilityVideos}
                                     lanesValue={lanes}
                                     selectVersion={selectVersion}
                                     selectVersionCompare={selectVersionCompare}
