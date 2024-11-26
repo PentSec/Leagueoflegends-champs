@@ -3,24 +3,26 @@ const VIDEO_BASE_URL = 'https://d28xe8vt774jo5.cloudfront.net/'
 const replaceDynamicDescriptionVariables = (description) => {
     return description
         .replace(/@(\w+)\*-?\d+@%?/g, '?%')
-        .replace(/@(\w+)@/g, '?') // Reemplaza contenido entre @...@ con '?'
-        .replace(/<[^>]+>/g, '') // Elimina contenido entre <> incluyendo los símbolos <>
+        .replace(/@(\w+)@/g, '?')
+        .replace(/<[^>]+>/g, '')
 }
 
 const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion }) => {
-    const abilityVideosMap = [
-        {
-            name: c.assets.passive.name,
-            videoUrl: `${VIDEO_BASE_URL}${c.assets.passive.abilityVideoPath}`
-        },
-        ...c.assets.spells?.map((spell) => ({
-            name: spell.name,
-            videoUrl: `${VIDEO_BASE_URL}${spell.abilityVideoPath}`
-        }))
-    ].reduce((acc, ability) => {
-        acc[ability.name] = ability.videoUrl
-        return acc
-    }, {})
+    const abilityVideosMap = c.assets
+        ? [
+              {
+                  name: c.assets.passive?.name,
+                  videoUrl: `${VIDEO_BASE_URL}${c.assets.passive?.abilityVideoPath}`
+              },
+              ...(c.assets.spells?.map((spell) => ({
+                  name: spell.name,
+                  videoUrl: `${VIDEO_BASE_URL}${spell.abilityVideoPath}`
+              })) || [])
+          ].reduce((acc, ability) => {
+              acc[ability.name] = ability.videoUrl
+              return acc
+          }, {})
+        : {}
 
     return (
         <>
@@ -54,7 +56,7 @@ const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion }) => {
                                             <p className="text-tiny text-slate-400">
                                                 v.{selectVersion}
                                             </p>
-                                            {abilityVideosMap[c.passive.name] && (
+                                            {(abilityVideosMap[c.passive.name] && (
                                                 <video
                                                     width="100%"
                                                     className="mt-2 rounded-lg"
@@ -67,7 +69,7 @@ const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion }) => {
                                                     />
                                                     Your browser does not support the video tag.
                                                 </video>
-                                            )}
+                                            )) || <div>no video available por this version</div>}
                                         </div>
                                     }
                                 >
@@ -88,15 +90,15 @@ const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion }) => {
                 {c.spells?.map((spell, index) => {
                     const compareSpell = cc?.spells?.[index]
                     const spellVideoUrl = abilityVideosMap[spell.name]
-                    const dynamicDescription = c.assets.spells?.[index]?.dynamicDescription
+                    const dynamicDescription = c.assets?.spells?.[index]?.dynamicDescription
                     const compareDynamicDescription =
                         cc?.assets?.spells?.[index]?.dynamicDescription
                     const replacedDynamicDescription = dynamicDescription
                         ? replaceDynamicDescriptionVariables(dynamicDescription)
-                        : ''
+                        : 'No dynamic description available for this version'
                     const replacedCompareDynamicDescription = compareDynamicDescription
                         ? replaceDynamicDescriptionVariables(compareDynamicDescription)
-                        : ''
+                        : 'No dynamic description available for this version'
 
                     return (
                         <div
@@ -186,7 +188,7 @@ const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion }) => {
                                                 <p className="text-tiny text-slate-400">
                                                     v.{selectVersion}
                                                 </p>
-                                                {spellVideoUrl && (
+                                                {(spellVideoUrl && (
                                                     <video
                                                         width="100%"
                                                         className="mt-2 rounded-lg"
@@ -199,6 +201,8 @@ const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion }) => {
                                                         />
                                                         Your browser does not support the video tag.
                                                     </video>
+                                                )) || (
+                                                    <div>no video available por this version</div>
                                                 )}
                                             </div>
                                         }
