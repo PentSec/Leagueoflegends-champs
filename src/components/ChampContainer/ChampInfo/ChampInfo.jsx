@@ -1,4 +1,13 @@
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, Spinner } from '@nextui-org/react'
+import {
+    Button,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalFooter,
+    Spinner,
+    Divider,
+    Code
+} from '@nextui-org/react'
 import { buildPositionIndex, getChampionLanes } from '@/utils'
 import { useMemo, useEffect, useState } from 'react'
 import useChampionVoice from './useChampionVoice'
@@ -80,12 +89,7 @@ function ChampInfo({
                                     lanesValue={lanes}
                                 />
                             </section>
-                            <section>
-                                <div className="flex flex-col items-center justify-center w-full p-4">
-                                    Current Ver:{selectVersion} to compare with ver:
-                                    {selectVersionCompare || 'None to compare'}
-                                </div>
-                            </section>
+                            <Divider />
                             <section className="flex flex-col items-center justify-center w-full p-4">
                                 <ChampionAbilities
                                     c={selectedChamp}
@@ -99,6 +103,10 @@ function ChampInfo({
                     )
                 )}
                 <ModalFooter>
+                    <div className="items-start justify-center w-full text-tiny">
+                        Current <Code color="success">v.{selectVersion}</Code> to compare with{' '}
+                        <Code color="warning">v.{selectVersionCompare || 'None to compare'}</Code>
+                    </div>
                     <Button size="sm" color="primary" onClick={onClose}>
                         Close
                     </Button>
