@@ -157,8 +157,11 @@ function ChampContainer() {
                             setVersionCompare={setVersionCompare}
                             currentVersions={versions}
                         />
-                        <Card radius="sm">
-                            <CardBody className="flex flex-col items-center justify-center gap-1 overflow-hidden lg:flex-row text-small">
+                        <Card
+                            radius="sm"
+                            className="w-full bg-transparent border lg:h-12 border-default lg:w-auto "
+                        >
+                            <CardBody className="items-center gap-1 overflow-hidden lg:flex-row text-small">
                                 <FilterRoleChamp
                                     value={roleChamps || []}
                                     initialKey={selectedRole}
