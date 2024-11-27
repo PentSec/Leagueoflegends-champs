@@ -34,7 +34,7 @@ function SelectLang({ languages, setLanguage, value, isLoadingLang, isErrorLang 
             variant="bordered"
             radius="sm"
             size="sm"
-            className="w-48"
+            className="w-full lg:w-48"
         >
             {mappedLanguages.map(({ code, name }) => (
                 <AutocompleteItem key={code} value={code}>

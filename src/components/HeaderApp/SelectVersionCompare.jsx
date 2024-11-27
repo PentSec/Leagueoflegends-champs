@@ -49,7 +49,7 @@ const SelectVersionCompare = ({ value, setVersionCompare, currentVersions }) => 
             variant="bordered"
             radius="sm"
             size="sm"
-            className="w-36"
+            className="w-full lg:w-36"
         >
             {visibleVersions.map((version) => (
                 <AutocompleteItem key={version} value={version}>

@@ -114,7 +114,7 @@ const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion }) => {
                                                     {spell.name}
                                                 </h2>
                                                 <div>
-                                                    <p className="text-red-700">
+                                                    <p>
                                                         <strong>Cooldown:</strong>{' '}
                                                         {spell.cooldownBurn}
                                                         {compareSpell &&
