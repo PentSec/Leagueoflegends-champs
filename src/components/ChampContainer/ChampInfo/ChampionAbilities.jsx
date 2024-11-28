@@ -1,4 +1,6 @@
-import { Image, Tooltip } from '@nextui-org/react'
+import { Image, Tooltip, Spinner } from '@nextui-org/react'
+import { useState } from 'react'
+import VideoAbilities from './VideoAbilities'
 const VIDEO_BASE_URL = 'https://d28xe8vt774jo5.cloudfront.net/'
 const replaceDynamicDescriptionVariables = (description) => {
     return description
@@ -8,6 +10,15 @@ const replaceDynamicDescriptionVariables = (description) => {
 }
 
 const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion }) => {
+    const [loadingVideo, setLoadingVideo] = useState({})
+
+    const handleVideoLoadStart = (name) => {
+        setLoadingVideo((prev) => ({ ...prev, [name]: true }))
+    }
+
+    const handleVideoLoaded = (name) => {
+        setLoadingVideo((prev) => ({ ...prev, [name]: false }))
+    }
     const abilityVideosMap = c.assets
         ? [
               {
@@ -57,19 +68,16 @@ const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion }) => {
                                                 v.{selectVersion}
                                             </p>
                                             {(abilityVideosMap[c.passive.name] && (
-                                                <video
-                                                    width="100%"
-                                                    className="mt-2 rounded-lg"
-                                                    autoPlay
-                                                    loop
-                                                >
-                                                    <source
-                                                        src={abilityVideosMap[c.passive.name]}
-                                                        type="video/webm"
+                                                <>
+                                                    {loadingVideo[c.passive.name] && (
+                                                        <Spinner label="Loading video..." />
+                                                    )}
+                                                    <VideoAbilities
+                                                        videoUrl={abilityVideosMap[c.passive.name]}
+                                                        name={c.passive.name}
                                                     />
-                                                    Your browser does not support the video tag.
-                                                </video>
-                                            )) || <div>no video available por this version</div>}
+                                                </>
+                                            )) || <div>No video available for this version</div>}
                                         </div>
                                     }
                                 >
@@ -189,20 +197,17 @@ const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion }) => {
                                                     v.{selectVersion}
                                                 </p>
                                                 {(spellVideoUrl && (
-                                                    <video
-                                                        width="100%"
-                                                        className="mt-2 rounded-lg"
-                                                        autoPlay
-                                                        loop
-                                                    >
-                                                        <source
-                                                            src={spellVideoUrl}
-                                                            type="video/webm"
+                                                    <>
+                                                        {loadingVideo[spell.name] && (
+                                                            <Spinner label="Loading video..." />
+                                                        )}
+                                                        <VideoAbilities
+                                                            videoUrl={spellVideoUrl}
+                                                            name={spell.name}
                                                         />
-                                                        Your browser does not support the video tag.
-                                                    </video>
+                                                    </>
                                                 )) || (
-                                                    <div>no video available por this version</div>
+                                                    <div>No video available for this version</div>
                                                 )}
                                             </div>
                                         }
@@ -215,7 +220,7 @@ const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion }) => {
                                         />
                                     </Tooltip>
                                     <h1 className="text-xl font-bold text-center text-teal-400 font-spiegel">
-                                        {spell.name} asd
+                                        {spell.name}
                                     </h1>
                                 </div>
                             </div>

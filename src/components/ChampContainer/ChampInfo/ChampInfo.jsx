@@ -25,7 +25,7 @@ function ChampInfo({
     selectVersionCompare
 }) {
     if (!selectedChamp) {
-        return <main>Loading champion data...</main>
+        return <Spinner label="Loading champion data..." color="default" labelColor="foreground" />
     }
     const [isModalFullyLoaded, setIsModalFullyLoaded] = useState(false)
     const positionIndex = useMemo(() => {

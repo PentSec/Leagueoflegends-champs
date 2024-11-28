@@ -39,7 +39,7 @@ const SelectVersionCompare = ({ value, setVersionCompare, currentVersions }) => 
 
     return (
         <Autocomplete
-            label="Version"
+            label="Compare"
             onInputChange={(text) => setQuery(text)}
             defaultItems={visibleVersions}
             scrollRef={scrollerRef}

@@ -176,6 +176,17 @@ function ChampContainer() {
                             </CardBody>
                         </Card>
                     </div>
+                    {isModalOpen && (
+                        <ChampInfo
+                            lanesRates={lanesRates}
+                            selectedChamp={selectedChamp}
+                            selectedCompareChamp={selectedCompareChamp}
+                            isLoadingChamp={isLoadingChamp}
+                            onClose={closeModal}
+                            selectVersion={version}
+                            selectVersionCompare={versionCompare}
+                        />
+                    )}
                     <ScrollShadow
                         className="h-[calc(85vh-32px)] overflow-auto p-12 gap-4"
                         ref={scrollerRef}
@@ -225,17 +236,6 @@ function ChampContainer() {
                             </div>
                         )}
                     </ScrollShadow>
-                    {isModalOpen && (
-                        <ChampInfo
-                            lanesRates={lanesRates}
-                            selectedChamp={selectedChamp}
-                            selectedCompareChamp={selectedCompareChamp}
-                            isLoadingChamp={isLoadingChamp}
-                            onClose={closeModal}
-                            selectVersion={version}
-                            selectVersionCompare={versionCompare}
-                        />
-                    )}
                 </>
             )}
         </main>
