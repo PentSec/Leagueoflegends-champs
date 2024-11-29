@@ -48,9 +48,9 @@ const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion }) => {
                                 <Tooltip
                                     content={
                                         <div className="flex flex-col gap-2 text-gray-300 max-w-[400px] text-tiny">
-                                            <h2 className="text-xl font-bold text-center text-teal-400 font-spiegel">
+                                            <h1 className="text-xl font-bold text-center text-teal-400 font-spiegel">
                                                 {c.passive.name}
-                                            </h2>
+                                            </h1>
 
                                             <p>
                                                 <strong>Description:</strong>{' '}
@@ -118,9 +118,9 @@ const ChampionAbilities = ({ c, cc, selectVersionCompare, selectVersion }) => {
                                     <Tooltip
                                         content={
                                             <div className=" max-w-[400px] flex flex-col gap-2 text-gray-300 text-tiny">
-                                                <h2 className="text-xl font-bold text-teal-400">
+                                                <h1 className="text-xl font-bold text-teal-400">
                                                     {spell.name}
-                                                </h2>
+                                                </h1>
                                                 <div>
                                                     <p>
                                                         <strong>Cooldown:</strong>{' '}

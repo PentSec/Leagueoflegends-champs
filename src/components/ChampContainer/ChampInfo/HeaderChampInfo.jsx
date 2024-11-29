@@ -19,9 +19,9 @@ const HeaderChampInfo = ({ imagesValue, champValue, lanesValue }) => {
                 <h1 className="font-extrabold text-white uppercase text-7xl font-beaufortBold">
                     {champValue.name}
                 </h1>
-                <span className="text-4xl italic font-bold text-teal-400 uppercase font-beaufortBold">
+                <h2 className="text-4xl italic font-bold text-teal-400 uppercase font-beaufortBold">
                     {champValue.title}
-                </span>
+                </h2>
 
                 <div className="grid grid-cols-3 gap-4 mt-2 font-spiegel text-default-foreground">
                     <p>{`${champValue.lore.split(' ').slice(0, 70).join(' ')}${
