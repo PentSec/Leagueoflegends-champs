@@ -1,11 +1,17 @@
 import { useGetChamps, useGetVersion, useGetLang, useGetLanesRates } from '@/hooks'
-import { ScrollShadow, Card, Image, Spinner, CardBody, Divider } from '@nextui-org/react'
+import {
+    ScrollShadow,
+    Card,
+    Image,
+    Spinner,
+    CardBody,
+    Divider,
+    useDisclosure
+} from '@nextui-org/react'
 import { useState, useMemo } from 'react'
 import { useInfiniteScroll } from '@nextui-org/use-infinite-scroll'
 import {
     SearchChamps,
-    TooltipComp,
-    ChampInfo,
     SelectVersion,
     SelectLang,
     FilterRoleChamp,
@@ -14,6 +20,7 @@ import {
 } from '@/components'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useEffect } from 'react'
+import TooltipChamp from './TooltipChamp'
 
 const MotionCard = motion.create(Card)
 
@@ -33,14 +40,15 @@ function ChampContainer() {
     //const states
     const [itemToShow, setItemToShow] = useState(20)
     const [searchChamps, setSearchChamps] = useState('')
-    const [isModalOpen, setIsModalOpen] = useState(false)
     const [language, setLanguage] = useState('en_US')
     const [version, setVersion] = useState('')
     const [versionCompare, setVersionCompare] = useState('')
     const [selectedRole, setSelectedRole] = useState('')
     const [selectedLane, setSelectedLane] = useState('')
+    const [hoveredChampId, setHoveredChampId] = useState(null)
 
     //const by hooks
+    const { isOpen, onOpen, onOpenChange } = useDisclosure()
     const { lanesRates, loadingLane } = useGetLanesRates()
     const { versions, isLoadingVersion, errorVersion } = useGetVersion()
     const { languages, isLoadingLang, errorLang } = useGetLang()
@@ -61,20 +69,11 @@ function ChampContainer() {
         return Array.from(new Set(allRoles))
     }, [champs])
 
-    const openModal = (champId) => {
+    const handleOpenDrawer = (champId) => {
+        setHoveredChampId(champId)
         fetchChampDetails(champId)
 
-        if (versionCompare && versionCompare !== version) {
-            fetchChampDetails(champId, versionCompare)
-        } else {
-            setSelectedCompareChamp(null)
-        }
-
-        setIsModalOpen(true)
-    }
-
-    const closeModal = () => {
-        setIsModalOpen(false)
+        onOpen()
     }
 
     if (isLoading) {
@@ -110,12 +109,10 @@ function ChampContainer() {
     })
 
     const hoverSound = useMemo(() => new Audio('/Leagueoflegends-champs/on-hover.ogg'), [])
-    const clickSound = useMemo(() => new Audio('/Leagueoflegends-champs/onopen-select.ogg'), [])
 
     useEffect(() => {
         hoverSound.load()
-        clickSound.load()
-    }, [hoverSound, clickSound])
+    }, [hoverSound])
 
     useEffect(() => {
         const storedVersion = localStorage.getItem('selectedVersion')
@@ -176,15 +173,18 @@ function ChampContainer() {
                             </CardBody>
                         </Card>
                     </div>
-                    {isModalOpen && (
-                        <ChampInfo
-                            lanesRates={lanesRates}
+                    {hoveredChampId && (
+                        <TooltipChamp
                             selectedChamp={selectedChamp}
+                            lanesRates={lanesRates}
+                            isOpen={isOpen}
+                            onOpenChange={onOpenChange}
+                            setSelectedCompareChamp={setSelectedCompareChamp}
                             selectedCompareChamp={selectedCompareChamp}
                             isLoadingChamp={isLoadingChamp}
-                            onClose={closeModal}
-                            selectVersion={version}
-                            selectVersionCompare={versionCompare}
+                            version={version}
+                            versionCompare={versionCompare}
+                            fetchChampDetails={fetchChampDetails}
                         />
                     )}
                     <ScrollShadow
@@ -194,39 +194,35 @@ function ChampContainer() {
                         <div className="grid grid-cols-3 gap-4 p-2 mb-4 lg:grid-cols-6">
                             {filteredChamps.slice(0, itemToShow).map((champ) => (
                                 <AnimatePresence key={champ.id}>
-                                    <TooltipComp selectedChamp={champ} lanesRates={lanesRates}>
-                                        <MotionCard
-                                            isHoverable
-                                            variants={cardVariants}
-                                            key={champ.id}
-                                            className="relative z-30 items-center content-center justify-center bg-transparent border-none w-fit h-fit"
-                                            initial="hidden"
-                                            animate="visible"
-                                            shadow="md"
-                                            onPress={() => openModal(champ.id)}
-                                            onPressStart={() => {
-                                                clickSound.pause()
-                                                clickSound.currentTime = 0
-                                                clickSound.play()
-                                            }}
-                                            onMouseEnter={() => {
-                                                hoverSound.pause()
-                                                hoverSound.currentTime = 0
-                                                hoverSound.play()
-                                            }}
-                                            isPressable
-                                        >
-                                            <Image
-                                                isZoomed
-                                                radius="none"
-                                                width="100%"
-                                                height="100%"
-                                                alt={champ.name}
-                                                src={champ.loadingImage}
-                                                className="border-none object-cover w-full h-full max-w-[350px] max-h-[350px] z-0"
-                                            />
-                                        </MotionCard>
-                                    </TooltipComp>
+                                    <MotionCard
+                                        isHoverable
+                                        variants={cardVariants}
+                                        onPress={() => {
+                                            handleOpenDrawer(champ.id)
+                                        }}
+                                        key={champ.id}
+                                        className="relative z-30 items-center content-center justify-center bg-transparent border-none w-fit h-fit"
+                                        initial="hidden"
+                                        animate="visible"
+                                        shadow="md"
+                                        onMouseEnter={() => {
+                                            hoverSound.pause()
+                                            hoverSound.currentTime = 0
+                                            hoverSound.play()
+                                        }}
+                                        isPressable
+                                    >
+                                        <Image
+                                            isZoomed
+                                            radius="none"
+                                            width="100%"
+                                            height="100%"
+                                            alt={champ.name}
+                                            src={champ.loadingImage}
+                                            className="border-none object-cover w-full h-full max-w-[350px] max-h-[350px] z-0"
+                                        />
+                                    </MotionCard>
+                                    {/* </TooltipComp> */}
                                 </AnimatePresence>
                             ))}
                         </div>

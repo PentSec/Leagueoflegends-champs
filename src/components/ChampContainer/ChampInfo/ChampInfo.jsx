@@ -107,7 +107,7 @@ function ChampInfo({
                         Current <Code color="success">v.{selectVersion}</Code> to compare with{' '}
                         <Code color="warning">v.{selectVersionCompare || 'None to compare'}</Code>
                     </div>
-                    <Button size="sm" color="primary" onClick={onClose}>
+                    <Button size="sm" color="primary" onPress={onClose}>
                         Close
                     </Button>
                 </ModalFooter>
