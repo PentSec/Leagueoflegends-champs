@@ -8,7 +8,7 @@ import {
     Divider,
     useDisclosure
 } from '@nextui-org/react'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useInfiniteScroll } from '@nextui-org/use-infinite-scroll'
 import {
     SearchChamps,
@@ -16,11 +16,10 @@ import {
     SelectLang,
     FilterRoleChamp,
     SelectLanes,
-    SelectVersionCompare
+    SelectVersionCompare,
+    TooltipChamp
 } from '@/components'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useEffect } from 'react'
-import TooltipChamp from './TooltipChamp'
 
 const MotionCard = motion.create(Card)
 
@@ -222,7 +221,6 @@ function ChampContainer() {
                                             className="border-none object-cover w-full h-full max-w-[350px] max-h-[350px] z-0"
                                         />
                                     </MotionCard>
-                                    {/* </TooltipComp> */}
                                 </AnimatePresence>
                             ))}
                         </div>
